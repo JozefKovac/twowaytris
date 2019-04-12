@@ -772,9 +772,9 @@ body{background-color:black; background-repeat:no-repeat; text-align: center; di
 #popisokpause{top:497px; left:224px;}
 #popisokMod{  top:517px; left:253px;}
 #popisokRoate{top:530px; left:160px;}
-#popisokLeft{ top:603px; left:87px;}
-#popisokLay{  top:603px; left:158px;}
-#popisokRight{top:603px; left:244px;}
+#popisokLeft{ top:603px; left:883px;}
+#popisokLay{  top:603px; left:180px;}
+#popisokRight{top:603px; left:276px;}
 .tlacitko{background: #aa3333;
           border: solid 5px #222222;
           width: 25px; height:25px;padding: 8px;
@@ -987,9 +987,9 @@ border-radius: 1px;*/
 <div id="vertikalnecentrovanie">
 <div id="ramcecek" >
 <div id="plech" >
-  <div class="tlacitko" id="lavet" onClick="tlacitkoUp();"></div>
-  <div class="tlacitko"id="horet" onClick="tlacitkoRight();"></div>
-  <div class="tlacitko"id="pravet" onClick="tlacitkoLeft();"></div>
+  <div class="tlacitko" id="lavet" ontouchstart="tlacitkoUp();"></div>
+  <div class="tlacitko"id="horet" ontouchstart="tlacitkoRight();"></div>
+  <div class="tlacitko"id="pravet" ontouchstart="tlacitkoLeft();"></div>
   <div class="tlacitko"id="dolet" onMouseDown="tlacitkoStlac()" onMouseUp="tlacitkoPust()" ontouchstart="tlacitkoStlac()" ontouchend="tlacitkoPust()">
     
   </div>
