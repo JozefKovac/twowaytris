@@ -788,10 +788,10 @@ body{background-color:black; background-repeat:no-repeat; text-align: center; di
           position:absolute;
         }
 
-#horett{top:475px;left:155px;}
-#lavett{top:475px;left:155px;}
-#dolett{top:475px;left:155px;}
-#pravett{top:475px;left:155px;}
+#horett{position:absolute; top:475px;left:155px;}
+#lavett{position:absolute; top:475px;left:155px;}
+#dolett{position:absolute; top:475px;left:155px;}
+#pravett{position:absolute; top:475px;left:155px;}
 
 #horet{top:475px;left:155px;}
 #lavet{top:545px;left:80px;}
@@ -992,12 +992,10 @@ border-radius: 1px;*/
 <div id="vertikalnecentrovanie">
 <div id="ramcecek" >
 <div id="plech" >
-  <div it="horett"><div class="tlacitko" id="horet" ontouchstart="tlacitkoUp();" ></div>
-  <div it="pravett"><div class="tlacitko"id="pravet" ontouchstart="tlacitkoRight();" ></div>
-  <div it="lavett"><div class="tlacitko"id="lavet" ontouchstart="tlacitkoLeft();" ></div>
-  <div it="dolett"><div class="tlacitko"id="dolet" onMouseDown="tlacitkoStlac()" onMouseUp="tlacitkoPust()" ontouchstart="tlacitkoStlac()" ontouchend="tlacitkoPust()">
-    
-  </div>
+  <div it="horett" ontouchstart="tlacitkoUp()"><div class="tlacitko" id="horet" ></div></div>
+  <div it="pravett" ontouchstart="tlacitkoRight()"><div class="tlacitko"id="pravet"></div></div>
+  <div it="lavett" ontouchstart="tlacitkoLeft()"><div class="tlacitko"id="lavet"></div></div>
+  <div it="dolett" onMouseDown="tlacitkoStlac()" onMouseUp="tlacitkoPust()" ontouchstart="tlacitkoStlac()" ontouchend="tlacitkoPust()"><div class="tlacitko"id="dolet" ></div></div>
 
   <div class="maletlacitko" id="male1"></div>
 
