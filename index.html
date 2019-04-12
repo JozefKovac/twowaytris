@@ -5,6 +5,20 @@
 <meta charset="UTF-8">
 <title>BRICKS AND BALLOONS</title>
 <script type='text/javascript'>
+/****************************************************************************
+
+
+odsunutie do boku pri otacani ked zavadzia
+1. ak nieje vylosovany tak losuje tvar pre tento okamih 
+   pre buduce padanie sa losuje vzdy !
+
+4.otacanie musi odsunut blok pri otacani od steny 
+
+
+7. programovat to ako clovek nie ako zviera priecinok, verzovanie, github !!!
+
+
+****************************************************************************/
 
 var sirka = 10,
     vyska = 27,
@@ -734,9 +748,17 @@ function vytvorLCD(){  //iba pri spusteni !!!
   tvarPrichystany=tvaro;
   
  }
+/*
+function gameOverDetector(){
+var gameover=false;
 
+ for(i=0; i<sirka; i++){
+    zafixovane[0][0]=
 
-
+   // zafixovane[vyska-1][i];
+  }
+}
+*/
 </script>
 <style>
 body{background-color:black; background-repeat:no-repeat; text-align: center; display: flex; justify-content: center;}
@@ -749,10 +771,10 @@ body{background-color:black; background-repeat:no-repeat; text-align: center; di
 }
 #popisokpause{top:497px; left:224px;}
 #popisokMod{  top:517px; left:253px;}
-#popisokRoate{top:550px; left:280px;}
-#popisokLeft{ top:550px; left:23px;}
-#popisokLay{  top:550px; left:93px;}
-#popisokRight{top:550px; left:176px;}
+#popisokRoate{top:530px; left:160px;}
+#popisokLeft{ top:603px; left:87px;}
+#popisokLay{  top:603px; left:158px;}
+#popisokRight{top:603px; left:244px;}
 .tlacitko{background: #aa3333;
           border: solid 5px #222222;
           width: 25px; height:25px;padding: 8px;
@@ -766,10 +788,10 @@ body{background-color:black; background-repeat:no-repeat; text-align: center; di
           position:absolute;
         }
 
-#lavet{top:490px;left:290px;}
-#pravet{top:490px;left:20px;}
-#dolet{top:490px;left:95px;}
-#horet{top:490px;left:170px;}
+#lavet{top:475px;left:155px;}
+#pravet{top:545px;left:80px;}
+#dolet{top:545px;left:155px;}
+#horet{top:545px;left:230px;}
 
 .maletlacitko{
         background: #999999;
@@ -836,7 +858,7 @@ body{background-color:black; background-repeat:no-repeat; text-align: center; di
 
 #plech{ background-color: #7E7d72;
   padding:20px;
-  width:315px;height:530px;
+  width:315px;height:590px;
          border-radius: 30px;
         box-shadow:
         0px 3px 8px rgba(0,0,0, 1),  
