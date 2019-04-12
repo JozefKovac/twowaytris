@@ -772,7 +772,7 @@ body{background-color:black; background-repeat:no-repeat; text-align: center; di
 #popisokpause{top:497px; left:224px;}
 #popisokMod{  top:517px; left:253px;}
 #popisokRoate{top:530px; left:160px;}
-#popisokLeft{ top:603px; left:883px;}
+#popisokLeft{ top:603px; left:103px;}
 #popisokLay{  top:603px; left:180px;}
 #popisokRight{top:603px; left:276px;}
 .tlacitko{background: #aa3333;
@@ -788,15 +788,10 @@ body{background-color:black; background-repeat:no-repeat; text-align: center; di
           position:absolute;
         }
 
-#horett{position:absolute; top:475px;left:155px;}
-#lavett{position:absolute; top:475px;left:155px;}
-#dolett{position:absolute; top:475px;left:155px;}
-#pravett{position:absolute; top:475px;left:155px;}
-
-#horet{top:475px;left:155px;}
-#lavet{top:545px;left:80px;}
+#lavet{top:475px;left:155px;}
+#pravet{top:545px;left:80px;}
 #dolet{top:545px;left:155px;}
-#pravet{top:545px;left:230px;}
+#horet{top:545px;left:230px;}
 
 .maletlacitko{
         background: #999999;
@@ -863,7 +858,7 @@ body{background-color:black; background-repeat:no-repeat; text-align: center; di
 
 #plech{ background-color: #7E7d72;
   padding:20px;
-  width:315px;height:660px;
+  width:315px;height:590px;
          border-radius: 30px;
         box-shadow:
         0px 3px 8px rgba(0,0,0, 1),  
@@ -992,10 +987,12 @@ border-radius: 1px;*/
 <div id="vertikalnecentrovanie">
 <div id="ramcecek" >
 <div id="plech" >
-  <div it="horett" onmousedown="tlacitkoUp()"><div class="tlacitko" id="horet" ></div></div>
-  <div it="pravett" onmousedown="tlacitkoRight()"><div class="tlacitko"id="pravet"></div></div>
-  <div it="lavett" onmousedown="tlacitkoLeft()"><div class="tlacitko"id="lavet"></div></div>
-  <div it="dolett" onMouseDown="tlacitkoStlac()" onMouseUp="tlacitkoPust()" ontouchstart="tlacitkoStlac()" ontouchend="tlacitkoPust()"><div class="tlacitko"id="dolet" ></div></div>
+  <div class="tlacitko" id="lavet" onmousedown="tlacitkoUp();" ontouchstart="tlacitkoUp();"></div>
+  <div class="tlacitko"id="horet" onmousedown="tlacitkoRight();" ontouchstart="tlacitkoRight();"></div>
+  <div class="tlacitko"id="pravet" onmousedown="tlacitkoLeft();" ontouchstart="tlacitkoLeft();"></div>
+  <div class="tlacitko"id="dolet" onMouseDown="tlacitkoStlac()" onMouseUp="tlacitkoPust()" ontouchstart="tlacitkoStlac()" ontouchend="tlacitkoPust()">
+    
+  </div>
 
   <div class="maletlacitko" id="male1"></div>
 
