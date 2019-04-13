@@ -5,34 +5,21 @@
 <meta charset="UTF-8">
 <title>BRICKS AND BALLOONS</title>
 <script type='text/javascript'>
-/****************************************************************************
-
-
-odsunutie do boku pri otacani ked zavadzia
-1. ak nieje vylosovany tak losuje tvar pre tento okamih 
-   pre buduce padanie sa losuje vzdy !
-
-4.otacanie musi odsunut blok pri otacani od steny 
-
-
-7. programovat to ako clovek nie ako zviera priecinok, verzovanie, github !!!
-
-
-****************************************************************************/
 
 var sirka = 10,
     vyska = 27,
-    hlbka = 2;
-var hraA = true,
-    hraB = false;
-
-var body = 0,
-    hibody = 0;
-
-var standard = 100;
+    body = 0,
+    hibody = 0,
+    pause = false,
+    restartPocitadlo=0;
+    pulsovaci = false,
+    gameover = false;
 var nasobok = 2;  //krat kolko pri kazdom dalsom
 
-var rychlost = 400;
+var rychlost = 1000,
+    minRychlost = 1000,
+    skokZrychlenia = 5;
+    zrychlene = 20;
 
 var     zhora = -4,
         zlava = 5,
@@ -93,6 +80,19 @@ var zafixovane = new Array(vyska);
     }
 }
 */
+
+
+function predStartom(){
+
+
+    zhora=-4;
+    skore=0;
+
+
+losujTvar();
+losujTvar();
+VykresliTotoMale(tvary[tvarPrichystany]);
+
 zafixovane[13][0][1]=true;
 
 zafixovane[13][1][1]=true;
@@ -106,6 +106,7 @@ zafixovane[13][8][1]=true;
 
 zafixovane[13][9][1]=true;
 
+}
 
 
 /*
@@ -302,43 +303,7 @@ return mozneKolizie;   //vyhodi mozne kolizie v 4 smeroch + rotacia
 
 }
 
-/*
 
-function urobRamcek(pole){
-  var okraj = 2;
-
-  var poleVyska = pole.lenght + orkaj;
-  var poleSirka = pole[0].length + okraj;
-
-
-
-var sRamcekom = new Array(poleVyska); //aby vedelo o sebe ze je pole
-  for (var i = 0; i < poleVyska; i++) {
-    sRamcekom[i] = new Array(poleSirka);  //vytvori v poli premennu a aby vedela ta premenna ze je tiez pole
-     for (var z = 0; z < poleSirka; z++) {
-        doDisplaya[i][z] = new Array(2);  //dalsia vnorena premenna ktora sa musi uvedomit
-
-        if(i<okraj || i>poleVyska-okraj){
-            if(z<okraj || z>poleSirka-2){
-                  doDisplaya[i][z][0]=false;          //posledne su iba dve preto staci bez cyklu zadefinovat hodnotu
-                  doDisplaya[i][z][1]=false;
-            }
-        }else{
-            if(z<okraj || z>poleSirka-2){
-                  doDisplaya[i][z][0]=false;          //posledne su iba dve preto staci bez cyklu zadefinovat hodnotu
-                  doDisplaya[i][z][1]=false;
-            }
-        }
-
-
-        
-            }
-    }
-}
-
-return ramcek;
-}
-*/
 
 function OtocPole(Policko,uhol){
 
@@ -505,22 +470,19 @@ function tlacitkoUp(){
 }
 
 function tlacitkoPust(){
-        rychlost=400;
+        rychlost=minRychlost;
 
 }
 
 function tlacitkoStlac(){
-          rychlost=30;
+          rychlost=zrychlene;
 }
 
 
 document.addEventListener('DOMContentLoaded', function () {  //spusti az po nacitani (casty 9 treba to osetrit)
 vytvorLCD();
 vytvorDalsieLCD();
-losujTvar();
-losujTvar();
-VykresliTotoMale(tvary[tvarPrichystany]);
-
+predStartom();
 }, false);
 
 document.addEventListener('keydown',function(event){ 
@@ -545,6 +507,10 @@ document.addEventListener('keydown',function(event){
 
         VykresliToto(spoj(VlozNaPlatno(tvarTeraz,zlava,zhora,farba,otocenie),zafixovane));
 
+        break;
+    case "r":
+        // Down pressed
+        pauseStartRestart();
         break;
  }
 }, false);// tlacitka
@@ -600,13 +566,36 @@ return posunutOtolkoto;
 var casMinuly=0;
 function updatni(time=0){  //time=0 pri prvom volani bez dat a hodnota time je vlozena z toho skriptu
 
-if(time>casMinuly+rychlost){
+if((time>casMinuly+rychlost)){
+        gameOverDetectorPrepadnutia();
                //console.log(farba);
         casMinuly=time;
+
+        if(pulsovaci){pulsovaci=false}else{pulsovaci=true}
+
+        if(gameover){
+          if(pulsovaci){
+            document.getElementById("gameover").style.color="rgba(0,20,40, 0.7)";
+            }else{
+            document.getElementById("gameover").style.color="rgba(0,20,40, 0.2)";
+          }
+        }else{document.getElementById("gameover").style.color="rgba(0,20,40, 0.2)";}
+
+        if(pause){
+          if(pulsovaci){
+
+            document.getElementById("pause").style.color="rgba(0,20,40, 0.7)";
+            }else{
+            document.getElementById("pause").style.color="rgba(0,20,40, 0.2)";
+          }
+        }else{document.getElementById("pause").style.color="rgba(0,20,40, 0.2)";}
+
+          if(!gameover&&!pause){
           if(farba==1){     
-                            
+                    
                if(zistiKolizie()[1]){
                 zafixovane=spoj(VlozNaPlatno(tvarTeraz,zlava,zhora,farba,otocenie),zafixovane);
+                gameOverDetector();
                 losujTvar();
                 VykresliTotoMale(tvary[tvarPrichystany]);
                 zhora=vyska+tvarTerazVyska()-1;
@@ -615,14 +604,17 @@ if(time>casMinuly+rychlost){
                 otocenie=0;
                 
                 vymazCeleRiadky();
+
                }else{
                zhora++;  
                VykresliToto(spoj(VlozNaPlatno(tvarTeraz,zlava,zhora,farba,otocenie),zafixovane));
+               
                }
            }else{
                              
                if(zistiKolizie()[3]){
                 zafixovane=spoj(VlozNaPlatno(tvarTeraz,zlava,zhora,farba,otocenie),zafixovane);
+                gameOverDetector();
                 losujTvar();
                 VykresliTotoMale(tvary[tvarPrichystany]);
                 zhora=0-tvarTerazVyska()+1;
@@ -631,12 +623,13 @@ if(time>casMinuly+rychlost){
                 otocenie=0;
                 
                 vymazCeleRiadky();
+
                }else{
                zhora--; 
                VykresliToto(spoj(VlozNaPlatno(tvarTeraz,zlava,zhora,farba,otocenie),zafixovane));
                }
            }
-       
+       }
    }
 requestAnimationFrame(updatni); // vola funkciu updatni v okamihu refreshu obrazovky
 }
@@ -748,17 +741,55 @@ function vytvorLCD(){  //iba pri spusteni !!!
   tvarPrichystany=tvaro;
   
  }
-/*
+
 function gameOverDetector(){
-var gameover=false;
-
  for(i=0; i<sirka; i++){
-    zafixovane[0][0]=
-
-   // zafixovane[vyska-1][i];
+    if(zafixovane[0][i][0]||zafixovane[0][i][1]||zafixovane[vyska-1][i][1]||zafixovane[vyska-1][i][0])gameover=true;
   }
 }
-*/
+
+function restartDown(){
+  
+}
+
+function restartUp(){
+
+}
+
+function pauseStartRestart(){
+
+if(!pause&&!gameover){pause=true}else{
+  if(pause&&!gameover){pause=false}
+}
+ 
+  if(gameover){//reset
+
+    document.getElementById("skore").innerHTML=skore;
+
+var pomo=vytvorStandardnePole(function(f,t,g){ //vytvori pole a nadstavi false
+  f[t][g][0]=false;          
+  f[t][g][1]=false;
+});
+    zafixovane=pomo;
+
+    predStartom();
+    gameover=false;
+  };
+}
+
+function gameOverDetectorPrepadnutia(){
+  var farbi=0;
+  var nahraska=VlozNaPlatno(tvarTeraz,zlava,zhora,farba,otocenie);
+  if(farba==0){farbi=vyska-1}else{farbi=0}
+  for(i=0; i<sirka; i++){
+    if(farba==0)if(nahraska[0][i][0])gameover=true;
+    if(farba==1)if(nahraska[vyska-1][i][1])gameover=true;
+  }
+
+}
+
+
+
 </script>
 <style>
 body{background-color:black; background-repeat:no-repeat; text-align: center; display: flex; justify-content: center;}
@@ -994,9 +1025,9 @@ border-radius: 1px;*/
     
   </div>
 
-  <div class="maletlacitko" id="male1"></div>
+  <div class="maletlacitko" id="male1" onmousedown="restartDown()" onmouseup="pauseStartRestart();restartUp();"></div>
 
-  <span class="popisok" id="popisokpause">STДЯT<br>PДЦSЄ<br>RЄSTДRT<br>PФШԐЯ ФӺҒ</span>
+  <span class="popisok" id="popisokpause">STДЯT<br>PДЦSЄ<br>RЄSTДRT</span>
 
 
   <span class="popisok" id="popisokRoate">↻ ЯOTATЄ</span>
