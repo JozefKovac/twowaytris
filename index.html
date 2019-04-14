@@ -11,15 +11,18 @@ var sirka = 10,
     body = 0,
     hibody = 0,
     pause = false,
-    restartPocitadlo=0;
     pulsovaci = false,
-    gameover = false;
-var nasobok = 2;  //krat kolko pri kazdom dalsom
+    gameover = false,
+    nasobok = 2;  //nasobok bodov pri kazdom dalsom
 
-var rychlost = 1000,
-    minRychlost = 1000,
-    skokZrychlenia = 5;
-    zrychlene = 20;
+var rychlost = 450,
+    skutocnaRychlost=500,
+    startRychlost = 500,
+    skokZrychlenia = 5,
+    level=1,
+    zrychlene = 20,  //pri stlaceni sipky dole
+    pocetDopadov =0,   //rata dopady
+    zrychliPo=9;      //po kolkych dopadoch zrychli
 
 var     zhora = -4,
         zlava = 5,
@@ -28,8 +31,8 @@ var     zhora = -4,
     tvarPrichystany = 1,
     tvarVyska = 0,
         farba = 1,  //0-kocka, 1-plna kocka aj smer padania
-    buraciaGula = false ;
-        skore = 0;
+    buraciaGula = false,
+        skore = 0,
       hiskore = 0;
 
 var padaDole=true;//hore je false
@@ -70,21 +73,11 @@ var doDisplaya = new Array(vyska); //aby vedelo o sebe ze je pole
     }
 }
 
-var zafixovane = new Array(vyska);
-  for (var i = 0; i < vyska; i++) {
-  zafixovane[i] = new Array(sirka);
-     for (var z = 0; z < sirka; z++) {
-        zafixovane[i][z] = new Array(2);
-        zafixovane[i][z][0]=false;
-        zafixovane[i][z][1]=false; 
-    }
-}
 */
 
-
 function predStartom(){
-
-
+    rychlost=startRychlost;
+    farba=1;
     zhora=-4;
     skore=0;
 
@@ -94,16 +87,11 @@ losujTvar();
 VykresliTotoMale(tvary[tvarPrichystany]);
 
 zafixovane[13][0][1]=true;
-
 zafixovane[13][1][1]=true;
-
 zafixovane[13][4][1]=true;
 
-
 zafixovane[13][5][1]=true;
-
 zafixovane[13][8][1]=true;
-
 zafixovane[13][9][1]=true;
 
 }
@@ -470,7 +458,7 @@ function tlacitkoUp(){
 }
 
 function tlacitkoPust(){
-        rychlost=minRychlost;
+        rychlost=skutocnaRychlost;
 
 }
 
@@ -497,21 +485,17 @@ document.addEventListener('keydown',function(event){
         tlacitkoUp();
         break;
     case "ArrowDown":
-        // Down pressed
         tlacitkoStlac();
         break;
     case "c":
-        // Down pressed
         if(tvarTeraz<6){tvarTeraz++;}else{tvarTeraz=0}
         tvarTerazVyska();
-
         VykresliToto(spoj(VlozNaPlatno(tvarTeraz,zlava,zhora,farba,otocenie),zafixovane));
-
         break;
-    case "r":
-        // Down pressed
+    case "p":
         pauseStartRestart();
         break;
+
  }
 }, false);// tlacitka
 
@@ -523,8 +507,13 @@ document.addEventListener('keyup',function(event){
         // pust
     tlacitkoPust();
      break;
+
+
+
  }
 }, false);
+
+
 
 function zistiVyvazenie(){
 var hornaMedzera=0,
@@ -559,9 +548,11 @@ var riadky=new Array();
 
 
 var posunutOtolkoto = Math.floor(vysoke/2) - (Math.floor((hornaMedzera-dolnaMedzera)/2)+dolnaMedzera) ; //odcita od stredu stred zlepenca 
-
 return posunutOtolkoto;
 }
+
+
+
 
 var casMinuly=0;
 function updatni(time=0){  //time=0 pri prvom volani bez dat a hodnota time je vlozena z toho skriptu
@@ -572,6 +563,11 @@ if((time>casMinuly+rychlost)){
         casMinuly=time;
 
         if(pulsovaci){pulsovaci=false}else{pulsovaci=true}
+
+        
+
+        document.getElementById("levelhodnota").innerHTML=level;
+        document.getElementById("speedhodnota").innerHTML=skutocnaRychlost/10+"ms";
 
         if(gameover){
           if(pulsovaci){
@@ -598,6 +594,13 @@ if((time>casMinuly+rychlost)){
                 gameOverDetector();
                 losujTvar();
                 VykresliTotoMale(tvary[tvarPrichystany]);
+
+                pocetDopadov++;
+                if(pocetDopadov>zrychliPo){
+                  zrychlovanie();
+                  pocetDopadov=0;
+                }
+
                 zhora=vyska+tvarTerazVyska()-1;
                 zlava=3;
                 farba=0;
@@ -617,6 +620,13 @@ if((time>casMinuly+rychlost)){
                 gameOverDetector();
                 losujTvar();
                 VykresliTotoMale(tvary[tvarPrichystany]);
+
+                pocetDopadov++;
+                if(pocetDopadov>zrychliPo){
+                  zrychlovanie();
+                  pocetDopadov=0;
+                }
+
                 zhora=0-tvarTerazVyska()+1;
                 zlava=3;
                 farba=1;
@@ -630,10 +640,11 @@ if((time>casMinuly+rychlost)){
                }
            }
        }
+      
    }
+
 requestAnimationFrame(updatni); // vola funkciu updatni v okamihu refreshu obrazovky
 }
-
 updatni(); //prvy raz zavola
 
 /*
@@ -748,13 +759,6 @@ function gameOverDetector(){
   }
 }
 
-function restartDown(){
-  
-}
-
-function restartUp(){
-
-}
 
 function pauseStartRestart(){
 
@@ -763,10 +767,10 @@ if(!pause&&!gameover){pause=true}else{
 }
  
   if(gameover){//reset
-
+    skore=0;
     document.getElementById("skore").innerHTML=skore;
 
-var pomo=vytvorStandardnePole(function(f,t,g){ //vytvori pole a nadstavi false
+var pomo=vytvorStandardnePole(function(f,t,g){ //vytvori prazdne pole a nadstavi false
   f[t][g][0]=false;          
   f[t][g][1]=false;
 });
@@ -788,7 +792,11 @@ function gameOverDetectorPrepadnutia(){
 
 }
 
-
+function zrychlovanie(){
+skutocnaRychlost=skutocnaRychlost - skokZrychlenia;
+console.log("skutocnaRychlost"+skutocnaRychlost);
+level++;
+}
 
 </script>
 <style>
@@ -845,7 +853,7 @@ body{background-color:black; background-repeat:no-repeat; text-align: center; di
 }
 
 #male1{top:471px;
-        left:233px;}
+        left:273px;}
 #male2{top:491px;
         left:240px;}
 
@@ -987,7 +995,7 @@ body{background-color:black; background-repeat:no-repeat; text-align: center; di
 #topSkore{position:absolute;font-size: 14px; color:rgba(0,20,40, 0.7); top:115px; left:154px; text-align: right; width:60px}
 #level{position:absolute;font-size: 14px; color:rgba(0,20,40, 0.7); top:230px; left:160px;}
 #speed{position:absolute;font-size: 14px; color:rgba(0,20,40, 0.7); top:250px; left:161px;}
-#music{position:absolute;font-size: 14px; color:rgba(0,20,40, 0.7); top:300px; left:160px;}
+#music{position:absolute;font-size: 14px; color:rgba(0,20,40, 0.1); top:300px; left:160px;}
 #pause{position:absolute;font-size: 14px; color:rgba(0,20,40, 0.7); top:325px; left:165px;}
 
 #pole{margin:20px; position: relative; font-size: 0px; border:solid rgba(0,0,100,0.4) 1px; padding:2px; width:200px;   }
@@ -1025,9 +1033,9 @@ border-radius: 1px;*/
     
   </div>
 
-  <div class="maletlacitko" id="male1" onmousedown="restartDown()" onmouseup="pauseStartRestart();restartUp();"></div>
+  <div class="maletlacitko" id="male1" onmousedown="pauseStartRestart()" ></div>
 
-  <span class="popisok" id="popisokpause">STДЯT<br>PДЦSЄ<br>RЄSTДRT</span>
+  <span class="popisok" id="popisokpause">PДЦSЄ<br>RЄSTДRT</span>
 
 
   <span class="popisok" id="popisokRoate">↻ ЯOTATЄ</span>
@@ -1045,8 +1053,8 @@ border-radius: 1px;*/
 
     <div id="dalsiePole"></div>
 
-    <div id="level">LЄVЄL <span>1</span></div>
-    <div id="speed">SPЄЄD <span>1</span></div>
+    <div id="level">LЄVЄL <span id="levelhodnota">1</span></div>
+    <div id="speed">SPЄЄD <span id="speedhodnota">1</span></div>
 
     <div id="music">♬</div>
     <div id="pause">PДЦSЄ</div>
