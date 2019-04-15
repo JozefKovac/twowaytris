@@ -18,7 +18,7 @@ var sirka = 10,
 var rychlost = 450,
     skutocnaRychlost=500,
     startRychlost = 500,
-    skokZrychlenia = 5,
+    skokZrychlenia = 3,
     level=1,
     zrychlene = 20,  //pri stlaceni sipky dole
     pocetDopadov =0,   //rata dopady
@@ -871,7 +871,7 @@ body{background-color:black; background-repeat:no-repeat; text-align: center; di
         left:255px;
 }
 
-#textnad{background-color: #7E7d72; padding-left:8px; padding-right:8px; letter-spacing: 2px; position:absolute; display:block; left:80px; top:10px; font-family:arial; font-size: 10px; font-weight:bold; color:#881111;}
+#textnad{background-color: #7E7d72; padding-left:8px; padding-right:8px; letter-spacing: 2px; position:absolute; display:block; left:103px; top:10px; font-family:arial; font-size: 10px; font-weight:bold; color:#881111;}
 
 #plech:before {
     position:absolute;
@@ -1026,10 +1026,10 @@ border-radius: 1px;*/
 <div id="vertikalnecentrovanie">
 <div id="ramcecek" >
 <div id="plech" >
-  <div class="tlacitko" id="lavet" ontouchstart="tlacitkoUp();" ></div>
-  <div class="tlacitko"id="horet"  ontouchstart="tlacitkoRight();" ></div>
-  <div class="tlacitko"id="pravet" ontouchstart="tlacitkoLeft();" ></div>
-  <div class="tlacitko"id="dolet"  ontouchstart="tlacitkoStlac()" ontouchend="tlacitkoPust()">
+  <div class="tlacitko" id="lavet" onmousedown="tlacitkoUp();" ontouchstart="tlacitkoUp();" ></div>
+  <div class="tlacitko"id="horet"  onmousedown="tlacitkoRight();" ontouchstart="tlacitkoRight();" ></div>
+  <div class="tlacitko"id="pravet" onmousedown="tlacitkoLeft();" ontouchstart="tlacitkoLeft();" ></div>
+  <div class="tlacitko"id="dolet"  onmousedown="tlacitkoStlac()" onmouseup="tlacitkoPust()" ontouchstart="tlacitkoStlac()" ontouchend="tlacitkoPust()">
     
   </div>
 
@@ -1043,7 +1043,7 @@ border-radius: 1px;*/
   <span class="popisok" id="popisokLay">ЄИTЄЯ</span>
   <span class="popisok" id="popisokRight">ЯIGHT</span>
 <div id="ram2"> 
-    <span id="textnad">BЯICҜS ДИD BДLOOИS</span>
+    <span id="textnad">TШO ШДY TЯIS</span>
 <div id="ram">
     <div id="gameover">GДMԐ ФVЄЯ</div>
     <div id="skorePopis">SCOЯЄ</div>
