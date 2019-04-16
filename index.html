@@ -10,7 +10,7 @@
   <link
     href="data:image/x-icon;base64,AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAgAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA6OjoAAAA9AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACIiIiIiIiIAIREREREREgAhEiEiEiESACESISISIRIAIREREREREgAhEREiERESACERESIRERIAIRABEREREgAhEAERERESACERERERERIAIRABABABEgAhEAEAEAESACERERERERIAIiIiIiIiIgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
     rel="icon" type="image/x-icon" />
-  <title>BRICKS AND BALLOONS</title>
+  <title>TWO-WAY-TRIS</title>
   <script type='text/javascript'>
 
     var sirka = 10,
@@ -312,7 +312,6 @@
 
       for (var i = 0; i < riadkyNaVymazanie.length; i++) {
 
-
         if (riadkyNaVymazanie[i] == true) {
           pocetVymazanych++;
           console.log("dojde k prepisaniu riadka c" + i);
@@ -340,11 +339,7 @@
               zafixovane[vyska - 1][u][0] = false;
             }
           }
-
-
         }
-
-
       }
       VykresliToto(spoj(vlozNaPlatno(tvarTeraz, zlava, zhora, farba, otocenie), zafixovane));
 
@@ -354,9 +349,7 @@
         hiskore = skore;
         document.getElementById("topSkore").innerHTML = hiskore;
       }
-
     }
-
 
     function najdiRiadky() {  //vypluje pole celych riadkov
 
@@ -369,8 +362,6 @@
         }
         if (riadky[i] == true) jetamdaco = true;
       }
-
-
 
       if (jetamdaco == true) {  //odosle hlasenie do konzoly ked tam daco je
         var hlasenie = "riadky:";
@@ -403,8 +394,6 @@
       return pomocna;
 
     }
-
-
 
     function tlacitkoLeft() {
       if (!zistiKolizie()[2]) {
@@ -495,7 +484,6 @@
       }
     }, false);// tlacitka
 
-
     document.addEventListener('keyup', function (event) {
       switch (event.key) {
 
@@ -504,12 +492,8 @@
           tlacitkoPust();
           break;
 
-
-
       }
     }, false);
-
-
 
     function zistiVyvazenie() {
       var hornaMedzera = 0,
@@ -524,11 +508,8 @@
         }
       }
 
-      //alert((vyska-hornaMedzera)-dolnaMedzera);
       return (vyska - hornaMedzera) - dolnaMedzera;
     }
-
-
 
     function centruj() {
 
@@ -541,14 +522,9 @@
         }
       }
 
-
-
       var posunutOtolkoto = Math.floor(vysoke / 2) - (Math.floor((hornaMedzera - dolnaMedzera) / 2) + dolnaMedzera); //odcita od stredu stred zlepenca 
       return posunutOtolkoto;
     }
-
-
-
 
     var casMinuly = 0;
     function updatni(time = 0) {  //time=0 pri prvom volani bez dat a hodnota time je vlozena z toho skriptu
@@ -560,10 +536,7 @@
 
         if (pulsovaci) { pulsovaci = false } else { pulsovaci = true }
 
-
-
         document.getElementById("levelhodnota").innerHTML = level;
-
 
         if (gameover) {
           if (pulsovaci) {
@@ -590,7 +563,6 @@
               gameOverDetector();
               losujTvar();
               VykresliTotoMale(tvary[tvarPrichystany]);
-
               pocetDopadov++;
               if (pocetDopadov > zrychliPo) {
                 zrychlovanie();
@@ -729,19 +701,15 @@
       document.getElementById("dalsiePole").innerHTML = text;
     }
 
-
     function tvarTerazVyska() {
       tvarVyska = tvary[tvarTeraz].length;
       return tvarVyska;
     }
 
-
-
     function losujTvar() {
       var tvaro = Math.floor(Math.random() * 7);
       tvarTeraz = tvarPrichystany;
       tvarPrichystany = tvaro;
-
     }
 
     function gameOverDetector() {
@@ -780,7 +748,6 @@
         if (farba == 0) if (nahraska[0][i][0]) gameover = true;
         if (farba == 1) if (nahraska[vyska - 1][i][1]) gameover = true;
       }
-
     }
 
     function zrychlovanie() {
@@ -1050,7 +1017,6 @@
       right: -11px;
       bottom: -11px;
       left: -11px;
-
       box-shadow:
         0px 10px 15px rgba(0, 0, 0, 0.9) inset,
         10px 0px 15px rgba(0, 0, 0, 0.9) inset,
@@ -1124,7 +1090,7 @@
       top: 325px;
       left: 165px;
     }
-
+    
     #pole {
       margin: 20px;
       position: relative;
