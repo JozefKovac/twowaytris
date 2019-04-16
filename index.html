@@ -1,939 +1,1003 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<meta name="viewport" content="minimal-ui, width=device-width, initial-scale=0.8, maximum-scale=0.8, user-scalable=no">
-<meta charset="UTF-8">
+  <meta name="viewport"
+    content="minimal-ui, width=device-width, initial-scale=0.8, maximum-scale=0.8, user-scalable=no">
+  <meta charset="UTF-8">
 
 
-<link href="data:image/x-icon;base64,AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAgAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA6OjoAAAA9AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACIiIiIiIiIAIREREREREgAhEiEiEiESACESISISIRIAIREREREREgAhEREiERESACERESIRERIAIRABEREREgAhEAERERESACERERERERIAIRABABABEgAhEAEAEAESACERERERERIAIiIiIiIiIgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" rel="icon" type="image/x-icon" />
-<title>BRICKS AND BALLOONS</title>
-<script type='text/javascript'>
+  <link
+    href="data:image/x-icon;base64,AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAgAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA6OjoAAAA9AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACIiIiIiIiIAIREREREREgAhEiEiEiESACESISISIRIAIREREREREgAhEREiERESACERESIRERIAIRABEREREgAhEAERERESACERERERERIAIRABABABEgAhEAEAEAESACERERERERIAIiIiIiIiIgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    rel="icon" type="image/x-icon" />
+  <title>BRICKS AND BALLOONS</title>
+  <script type='text/javascript'>
 
-var sirka = 10,
-    vyska = 27,
-    body = 0,
-    hibody = 0,
-    pause = false,
-    pulsovaci = false,
-    gameover = false,
-    nasobok = 2;  //nasobok bodov pri kazdom dalsom
+    var sirka = 10,
+      vyska = 27,
+      body = 0,
+      hibody = 0,
+      pause = false,
+      pulsovaci = false,
+      gameover = false,
+      nasobok = 2;  //nasobok bodov pri kazdom dalsom
 
 
-var rychlost = 450,
-    skutocnaRychlost=500,
-    startRychlost = 500,
-    skokZrychlenia = 3,
-    level=1,
-    zrychlene = 20,  //pri stlaceni sipky dole
-    pocetDopadov =0,   //rata dopady
-    zrychliPo=9;      //po kolkych dopadoch zrychli
+    var rychlost = 450,
+      skutocnaRychlost = 500,
+      startRychlost = 500,
+      skokZrychlenia = 3,
+      level = 1,
+      zrychlene = 20,  //pri stlaceni sipky dole
+      pocetDopadov = 0,   //rata dopady
+      zrychliPo = 9;      //po kolkych dopadoch zrychli
 
-var     zhora = -4,
-        zlava = 5,
-     otocenie = 0,
-    tvarTeraz = 0,
-    tvarPrichystany = 1,
-    tvarVyska = 0,
-        farba = 1,  //0-kocka, 1-plna kocka aj smer padania
-    buraciaGula = false,
-        skore = 0,
+    var zhora = -4,
+      zlava = 5,
+      otocenie = 0,
+      tvarTeraz = 0,
+      tvarPrichystany = 1,
+      tvarVyska = 0,
+      farba = 1,  //0-kocka, 1-plna kocka aj smer padania
+      buraciaGula = false,
+      skore = 0,
       hiskore = 0;
 
-var padaDole=true;//hore je false
-var tvary=VytvorTvary("000-111-001 000-111-100 011-110 110-011 11-11 000-111-010 0000-1111-0000");
-//pekne v riadku nieje potom treba pisat matrixy
+    var padaDole = true;//hore je false
+    var tvary = VytvorTvary("000-111-001 000-111-100 011-110 110-011 11-11 000-111-010 0000-1111-0000");
+    //pekne v riadku nieje potom treba pisat matrixy
 
-function vytvorStandardnePole(prikazy){
-var cokolvek = new Array(vyska); //aby vedelo o sebe ze je pole
-  for (var i = 0; i < vyska; i++) {
-  cokolvek[i] = new Array(sirka);  //vytvori v poli premennu a aby vedela ta premenna ze je tiez pole
-     for (var z = 0; z < sirka; z++) {
-        cokolvek[i][z] = new Array(2);  //dalsia vnorena premenna ktora sa musi uvedomit
-prikazy(cokolvek,i,z);
-    }
-}
-return cokolvek;
-}
-
-var doDisplaya=vytvorStandardnePole(function(f,t,g){ //vytvori pole a nadstavi false
-  f[t][g][0]=false;          
-  f[t][g][1]=false;
-});
-
-var zafixovane=vytvorStandardnePole(function(f,t,g){ //vytvori pole a nadstavi false
-  f[t][g][0]=false;          
-  f[t][g][1]=false;
-});
-
-
-/*    //vymaz uz je to zjednodusene
-var doDisplaya = new Array(vyska); //aby vedelo o sebe ze je pole
-  for (var i = 0; i < vyska; i++) {
-  doDisplaya[i] = new Array(sirka);  //vytvori v poli premennu a aby vedela ta premenna ze je tiez pole
-     for (var z = 0; z < sirka; z++) {
-        doDisplaya[i][z] = new Array(2);  //dalsia vnorena premenna ktora sa musi uvedomit
-        doDisplaya[i][z][0]=false;          //posledne su iba dve preto staci bez cyklu zadefinovat hodnotu
-        doDisplaya[i][z][1]=false;
-    }
-}
-
-*/
-
-function predStartom(){
-    rychlost=startRychlost;
-    farba=1;
-    zhora=-4;
-    skore=0;
-    level=1;
-
-losujTvar();
-losujTvar();
-VykresliTotoMale(tvary[tvarPrichystany]);
-
-zafixovane[13][0][1]=true;
-zafixovane[13][1][1]=true;
-zafixovane[13][4][1]=true;
-
-zafixovane[13][5][1]=true;
-zafixovane[13][8][1]=true;
-zafixovane[13][9][1]=true;
-
-}
-
-
-/*
-for (i=0; i<9; i++){    //pomocka eroticka 
-   zafixovane[14][i][1]=true;
-}
-*/
-
-
-function VytvorTvary(retazec){  //spravi 2D norm pole z retazca
-    var tvar=retazec.split(" ");//medzera rozdeli na tvary
-    for(a=0; a<tvar.length; a++){
-      tvar[a]=tvar[a].split("-");//pomlcka oddeluje x y
-      for(b=0; b<tvar[a].length; b++){
-         tvar[a][b]=tvar[a][b].split("");//rozdeli na znaky koli matici
-         for(c=0; c<tvar[a][b].length; c++){                               //0/1 zmeni na false/true
-         if(tvar[a][b][c]==1){tvar[a][b][c]=true}else{tvar[a][b][c]=false}           
+    function vytvorStandardnePole(prikazy) {
+      var cokolvek = new Array(vyska); //aby vedelo o sebe ze je pole
+      for (var i = 0; i < vyska; i++) {
+        cokolvek[i] = new Array(sirka);  //vytvori v poli premennu a aby vedela ta premenna ze je tiez pole
+        for (var z = 0; z < sirka; z++) {
+          cokolvek[i][z] = new Array(2);  //dalsia vnorena premenna ktora sa musi uvedomit
+          prikazy(cokolvek, i, z);
         }
       }
+      return cokolvek;
     }
-return tvar;
-}
 
-function Rotacia90(Polee){
+    var doDisplaya = vytvorStandardnePole(function (f, t, g) { //vytvori pole a nadstavi false
+      f[t][g][0] = false;
+      f[t][g][1] = false;
+    });
 
-var  vysoke=Polee[0].length;
-var  siroke=Polee.length;
+    var zafixovane = vytvorStandardnePole(function (f, t, g) { //vytvori pole a nadstavi false
+      f[t][g][0] = false;
+      f[t][g][1] = false;
+    });
 
 
-  var pomocnePole = new Array(vysoke);
-	 for (var i = 0; i < vysoke; i++) {
-	 pomocnePole[i] = new Array(siroke);
-	    for (var z = 0; z < siroke; z++) {
-	       pomocnePole[i][z]=false;
+    /*    //vymaz uz je to zjednodusene
+    var doDisplaya = new Array(vyska); //aby vedelo o sebe ze je pole
+      for (var i = 0; i < vyska; i++) {
+      doDisplaya[i] = new Array(sirka);  //vytvori v poli premennu a aby vedela ta premenna ze je tiez pole
+         for (var z = 0; z < sirka; z++) {
+            doDisplaya[i][z] = new Array(2);  //dalsia vnorena premenna ktora sa musi uvedomit
+            doDisplaya[i][z][0]=false;          //posledne su iba dve preto staci bez cyklu zadefinovat hodnotu
+            doDisplaya[i][z][1]=false;
         }
-     }
-  
-   for(b=0; b<vysoke; b++){                          //  1 2 3     4 1
-      for(c=0; c<siroke; c++){                       //  4 5 6     5 2
-         pomocnePole[b][siroke-c-1]=Polee[c][b];     //            6 3
-      }
-   }
-
-return pomocnePole;
-}
-
-function Rotacia(tvar,rota){
-switch(rota){
-  case 0:
-  return tvar;
-  break;
-
-  case 1:
-  return Rotacia90(tvar);
-  break;
-
-  case 2:
-  return Rotacia90(Rotacia90(tvar));
-  break;
-
-  case 3:
-  return Rotacia90(Rotacia90(Rotacia90(tvar)));
-  break;
-
-  default:
-  alert('rotacia Error');
-  break;
-}
-}
-
-
-
-
-function VlozNaPlatno(tvar,x,y,z,aktualRota){//osetrit orezavanie ked je mimo z= 0 alebo 1
-
-var tvaroh = tvary[tvar]; //Ked chces stavat hmotu potrebujes bielkoviny. Tvaroh ma vela bielkovin:)
-
-var pomocna = new Array(vyska);
-  for (var i = 0; i < vyska; i++) {
-  pomocna[i] = new Array(sirka);
-     for (var r = 0; r < sirka; r++) {
-        pomocna[i][r] = new Array(2);
-  //      pomocna[i][r][0]=false;
-  //      pomocna[i][r][1]=false;
-
-       //if(z==0){pomocna[i][z][0]=false}else{pomocna[i][z][1]=false}
-      
-      if( (r-x)>=0 & (r-x)<Rotacia(tvaroh,aktualRota)[0].length  &  (i-y)>=0  & (i-y)<Rotacia(tvaroh,aktualRota).length ){
-        //pomocna[i][r][0]=tvary[tvar][r-x][i-y];
-        pomocna[i][r][0]=Rotacia(tvaroh,aktualRota)[i-y][r-x];
-        if(z==1){pomocna[i][r][1]=Rotacia(tvaroh,aktualRota)[i-y][r-x]}else{pomocna[i][r][1]=false}
-        
-      }else{
-        pomocna[i][r][0]=false;
-        pomocna[i][r][1]=false;
-      }
     }
-  }
-    return pomocna;
-}
-
-function zistiPrekrytieRamceka(tvr, lava, horna, oto){
-
-var ram = new Array(vyska+4);
-  for (var i = 0; i < vyska+4; i++) {
-  ram[i] = new Array(sirka+4);
-     for (var z = 0; z < sirka+4; z++) {
-
-      if( z<2 || z>sirka+1){
-        ram[i][z]=true;
-      }else{
-        ram[i][z]=false;
-      }
-
-
-    }
-}
-
-var tvaroh = tvary[tvr]; //Ked chces stavat hmotu potrebujes bielkoviny. Tvaroh ma vela bielkovin:)
-
-var ram2 = new Array(vyska+4);
-  for (var i = 0; i < vyska+4; i++) {
-  ram2[i] = new Array(sirka+4);
-     for (var r = 0; r < sirka+4; r++) {
-
-      if( (r-lava-2)>=0 & (r-lava-2)<Rotacia(tvaroh,oto)[0].length  &  (i-horna-2)>=0  & (i-horna-2)<Rotacia(tvaroh,oto).length ){
-        ram2[i][r]=Rotacia(tvaroh,oto)[i-horna-2][r-lava-2];
-
-      }else{
-        ram2[i][r]=false;
-      }
-
-    }
-  }
     
+    */
 
-var kolizia=false;
+    function predStartom() {
+      rychlost = startRychlost;
+      farba = 1;
+      zhora = -4;
+      skore = 0;
+      level = 1;
 
-var pomocna = new Array(vyska+4);
-  for (var i = 0; i < vyska+4; i++) {
-  pomocna[i] = new Array(sirka+4);
-     for (var r = 0; r < sirka+4; r++) {
+      losujTvar();
+      losujTvar();
+      VykresliTotoMale(tvary[tvarPrichystany]);
 
-        if( ram[i][r] && ram2[i][r]) kolizia = true; 
-        //console.log(ram[i][r]+"z"+ram2[i][r]);
-    }
-  }
-    
-     return kolizia;
-}
+      zafixovane[13][0][1] = true;
+      zafixovane[13][1][1] = true;
+      zafixovane[13][4][1] = true;
 
-function zistiPrekrytie(celePole1,celePole2){
-var kolizia=false;
-
-
-var pomocna = new Array(vyska);
-  for (var i = 0; i < vyska; i++) {
-  pomocna[i] = new Array(sirka);
-     for (var r = 0; r < sirka; r++) {
-        pomocna[i][r] = new Array(2);
-        if( (celePole1[i][r][0]||celePole1[i][r][1]) && (celePole2[i][r][0]||celePole2[i][r][1])) kolizia = true; 
+      zafixovane[13][5][1] = true;
+      zafixovane[13][8][1] = true;
+      zafixovane[13][9][1] = true;
 
     }
-  }
-
-     return kolizia;
-}
-
-
-function zistiKolizie(){
-//zoberie aktualny tvar a poziciu a funkcia
-//vyhodi ci sa moze v danom okamihu tvar otocit o jeden skok alebo posunut o jeden krok (tlacitka alebo padanie)
-
-var krokOtocenia = otocenie + 1;
-if( otocenie == 3 )krokOtocenia = 0;
-
-var mozneKolizie = new Array();
-
-mozneKolizie[1] = zistiPrekrytie( VlozNaPlatno( tvarTeraz, zlava   ,zhora+1, farba,  otocenie     ), zafixovane );//dole
-
-mozneKolizie[2] = zistiPrekrytie( VlozNaPlatno( tvarTeraz, zlava-1 ,zhora,   farba,  otocenie     ), zafixovane ); //lavo
-     if(zistiPrekrytieRamceka(tvarTeraz, zlava-1 ,zhora, otocenie))mozneKolizie[2]=true;
-mozneKolizie[3] = zistiPrekrytie( VlozNaPlatno( tvarTeraz, zlava   ,zhora-1, farba,  otocenie     ), zafixovane ); //hore
-
-mozneKolizie[4] = zistiPrekrytie( VlozNaPlatno( tvarTeraz, zlava+1 ,zhora,   farba,  otocenie     ), zafixovane ); //vpravo
-     if(zistiPrekrytieRamceka(tvarTeraz, zlava+1   ,zhora, otocenie))mozneKolizie[4]=true;
-mozneKolizie[5] = zistiPrekrytie( VlozNaPlatno( tvarTeraz, zlava   ,zhora,   farba,  krokOtocenia ), zafixovane ); //rotacia
-     if(zistiPrekrytieRamceka(tvarTeraz, zlava   ,zhora, krokOtocenia))mozneKolizie[5]=true;
-
-mozneKolizie[0]=mozneKolizie[1]||mozneKolizie[2]||mozneKolizie[3]||mozneKolizie[4]||mozneKolizie[5];//ci vobec je kolizia
-//if(mozneKolizie[5])alert();
-
-return mozneKolizie;   //vyhodi mozne kolizie v 4 smeroch + rotacia
-
-}
 
 
 
-function OtocPole(Policko,uhol){
+    function VytvorTvary(retazec) {  //spravi 2D norm pole z retazca
+      var tvar = retazec.split(" ");//medzera rozdeli na tvary
+      for (a = 0; a < tvar.length; a++) {
+        tvar[a] = tvar[a].split("-");//pomlcka oddeluje x y
+        for (b = 0; b < tvar[a].length; b++) {
+          tvar[a][b] = tvar[a][b].split("");//rozdeli na znaky koli matici
+          for (c = 0; c < tvar[a][b].length; c++) {                               //0/1 zmeni na false/true
+            if (tvar[a][b][c] == 1) { tvar[a][b][c] = true } else { tvar[a][b][c] = false }
+          }
+        }
+      }
+      return tvar;
+    }
 
-  switch(uhol) {
-      case 1:
+    function Rotacia90(Polee) {
+
+      var vysoke = Polee[0].length;
+      var siroke = Polee.length;
+
+
+      var pomocnePole = new Array(vysoke);
+      for (var i = 0; i < vysoke; i++) {
+        pomocnePole[i] = new Array(siroke);
+        for (var z = 0; z < siroke; z++) {
+          pomocnePole[i][z] = false;
+        }
+      }
+
+      for (b = 0; b < vysoke; b++) {                          //  1 2 3     4 1
+        for (c = 0; c < siroke; c++) {                       //  4 5 6     5 2
+          pomocnePole[b][siroke - c - 1] = Polee[c][b];     //            6 3
+        }
+      }
+
+      return pomocnePole;
+    }
+
+    function Rotacia(tvar, rota) {
+      switch (rota) {
+        case 0:
+          return tvar;
+          break;
+
+        case 1:
+          return Rotacia90(tvar);
+          break;
+
+        case 2:
+          return Rotacia90(Rotacia90(tvar));
+          break;
+
+        case 3:
+          return Rotacia90(Rotacia90(Rotacia90(tvar)));
+          break;
+
+        default:
+          alert('rotacia Error');
+          break;
+      }
+    }
+
+    function vlozNaPlatno(tvar, x, y, z, aktualRota) {//osetrit orezavanie ked je mimo z= 0 alebo 1
+
+      var tvaroh = tvary[tvar]; //Ked chces stavat hmotu potrebujes bielkoviny. Tvaroh ma vela bielkovin:)
+
+      var pomocna = new Array(vyska);
+      for (var i = 0; i < vyska; i++) {
+        pomocna[i] = new Array(sirka);
+        for (var r = 0; r < sirka; r++) {
+          pomocna[i][r] = new Array(2);
+
+          if ((r - x) >= 0 & (r - x) < Rotacia(tvaroh, aktualRota)[0].length & (i - y) >= 0 & (i - y) < Rotacia(tvaroh, aktualRota).length) {
+
+            pomocna[i][r][0] = Rotacia(tvaroh, aktualRota)[i - y][r - x];
+            if (z == 1) { pomocna[i][r][1] = Rotacia(tvaroh, aktualRota)[i - y][r - x] } else { pomocna[i][r][1] = false }
+
+          } else {
+            pomocna[i][r][0] = false;
+            pomocna[i][r][1] = false;
+          }
+        }
+      }
+      return pomocna;
+    }
+
+    function zistiPrekrytieRamceka(tvr, lava, horna, oto) {
+
+      var ram = new Array(vyska + 4);
+      for (var i = 0; i < vyska + 4; i++) {
+        ram[i] = new Array(sirka + 4);
+        for (var z = 0; z < sirka + 4; z++) {
+
+          if (z < 2 || z > sirka + 1) {
+            ram[i][z] = true;
+          } else {
+            ram[i][z] = false;
+          }
+
+
+        }
+      }
+
+      var tvaroh = tvary[tvr]; //Ked chces stavat hmotu potrebujes bielkoviny. Tvaroh ma vela bielkovin:)
+
+      var ram2 = new Array(vyska + 4);
+      for (var i = 0; i < vyska + 4; i++) {
+        ram2[i] = new Array(sirka + 4);
+        for (var r = 0; r < sirka + 4; r++) {
+
+          if ((r - lava - 2) >= 0 & (r - lava - 2) < Rotacia(tvaroh, oto)[0].length & (i - horna - 2) >= 0 & (i - horna - 2) < Rotacia(tvaroh, oto).length) {
+            ram2[i][r] = Rotacia(tvaroh, oto)[i - horna - 2][r - lava - 2];
+
+          } else {
+            ram2[i][r] = false;
+          }
+
+        }
+      }
+
+
+      var kolizia = false;
+
+      var pomocna = new Array(vyska + 4);
+      for (var i = 0; i < vyska + 4; i++) {
+        pomocna[i] = new Array(sirka + 4);
+        for (var r = 0; r < sirka + 4; r++) {
+
+          if (ram[i][r] && ram2[i][r]) kolizia = true;
+          //console.log(ram[i][r]+"z"+ram2[i][r]);
+        }
+      }
+
+      return kolizia;
+    }
+
+    function zistiPrekrytie(celePole1, celePole2) {
+      var kolizia = false;
+
+
+      var pomocna = new Array(vyska);
+      for (var i = 0; i < vyska; i++) {
+        pomocna[i] = new Array(sirka);
+        for (var r = 0; r < sirka; r++) {
+          pomocna[i][r] = new Array(2);
+          if ((celePole1[i][r][0] || celePole1[i][r][1]) && (celePole2[i][r][0] || celePole2[i][r][1])) kolizia = true;
+
+        }
+      }
+
+      return kolizia;
+    }
+
+
+    function zistiKolizie() {
+      //zoberie aktualny tvar a poziciu a funkcia
+      //vyhodi ci sa moze v danom okamihu tvar otocit o jeden skok alebo posunut o jeden krok (tlacitka alebo padanie)
+
+      var krokOtocenia = otocenie + 1;
+      if (otocenie == 3) krokOtocenia = 0;
+
+      var mozneKolizie = new Array();
+
+      mozneKolizie[1] = zistiPrekrytie(vlozNaPlatno(tvarTeraz, zlava, zhora + 1, farba, otocenie), zafixovane);//dole
+
+      mozneKolizie[2] = zistiPrekrytie(vlozNaPlatno(tvarTeraz, zlava - 1, zhora, farba, otocenie), zafixovane); //lavo
+      if (zistiPrekrytieRamceka(tvarTeraz, zlava - 1, zhora, otocenie)) mozneKolizie[2] = true;
+      mozneKolizie[3] = zistiPrekrytie(vlozNaPlatno(tvarTeraz, zlava, zhora - 1, farba, otocenie), zafixovane); //hore
+
+      mozneKolizie[4] = zistiPrekrytie(vlozNaPlatno(tvarTeraz, zlava + 1, zhora, farba, otocenie), zafixovane); //vpravo
+      if (zistiPrekrytieRamceka(tvarTeraz, zlava + 1, zhora, otocenie)) mozneKolizie[4] = true;
+      mozneKolizie[5] = zistiPrekrytie(vlozNaPlatno(tvarTeraz, zlava, zhora, farba, krokOtocenia), zafixovane); //rotacia
+      if (zistiPrekrytieRamceka(tvarTeraz, zlava, zhora, krokOtocenia)) mozneKolizie[5] = true;
+
+      mozneKolizie[0] = mozneKolizie[1] || mozneKolizie[2] || mozneKolizie[3] || mozneKolizie[4] || mozneKolizie[5];//ci vobec je kolizia
+      //if(mozneKolizie[5])alert();
+
+      return mozneKolizie;   //vyhodi mozne kolizie v 4 smeroch + rotacia
+
+    }
+
+
+
+    function OtocPole(Policko, uhol) {
+
+      switch (uhol) {
+        case 1:
           return Rotacia90(Policko);
           break;
-      case 2:
+        case 2:
           return Rotacia90(Rotacia90(Policko));
           break;
-      case 3:
+        case 3:
           return Rotacia90(Rotacia90(Rotacia90(Policko)));
           break;
-      default:
+        default:
           alert("neda sa otocit " + uhol);
-  }
+      }
 
-}
-
-function vymazCeleRiadky(){
- var pocetVymazanych=0;
- var riadkyNaVymazanie=najdiRiadky();
-
-  for(var i=0; i<riadkyNaVymazanie.length; i++){
-
-
-    if(riadkyNaVymazanie[i]==true){
-      pocetVymazanych++;
-        console.log("dojde k prepisaniu riadka c"+i);
-        if(zistiVyvazenie()>0){
-
-            for(var g=i; g>0; g--){
-               console.log("na riadok c:"+g+"sa presunie riadok cislo"+(g-1));
-               zafixovane[g]=zafixovane[g-1];
-               riadkyNaVymazanie[g]=riadkyNaVymazanie[g-1]    //usporiada vstupne udaje kedze sa poposuvali riadky
-               i=0;                  //pekne od zaciatku 
-            }
-            for(var u=0; u<zafixovane[0].length; u++){ //vynulue vrchny riadok
-               zafixovane[0][u][1]=false;
-               zafixovane[0][u][0]=false;
-            }
-        }else{
-            for(var g=i; g<vyska-1; g++){
-               console.log("na riadok c:"+g+"sa presunie riadok cislo"+(g+1));
-               zafixovane[g]=zafixovane[g+1];
-               riadkyNaVymazanie[g]=riadkyNaVymazanie[g+1]   //usporiada vstupne udaje kedze sa poposuvali riadky
-               i=0;                  //pekne od zaciatku
-            }          
-            for(var u=0; u<zafixovane[0].length; u++){ //vynulue spodny
-               zafixovane[vyska-1][u][1]=false;
-               zafixovane[vyska-1][u][0]=false;
-            }
-        }
-
-
-     }
-
-
-  }
-  VykresliToto(spoj(VlozNaPlatno(tvarTeraz,zlava,zhora,farba,otocenie),zafixovane));
-  
-  skore=skore+pocetVymazanych*100*pocetVymazanych;
-  document.getElementById("skore").innerHTML=skore;
-  if(skore>hiskore){
-    hiskore=skore;
-    document.getElementById("topSkore").innerHTML = hiskore;
-  }
-
-}
-
-
-function najdiRiadky(){  //vypluje pole celych riadkov
-
-var riadky=new Array();
-var jetamdaco=false;
-  for (var i = 0; i < vyska; i++) {
-     riadky[i]=true;
-     for (var r = 0; r < sirka; r++) {
-        if(!zafixovane[i][r][0]&&!zafixovane[i][r][1])riadky[i]=false;
     }
-     if(riadky[i]==true)jetamdaco=true;
-  }
+
+    function vymazCeleRiadky() {
+      var pocetVymazanych = 0;
+      var riadkyNaVymazanie = najdiRiadky();
+
+      for (var i = 0; i < riadkyNaVymazanie.length; i++) {
 
 
+        if (riadkyNaVymazanie[i] == true) {
+          pocetVymazanych++;
+          console.log("dojde k prepisaniu riadka c" + i);
+          if (zistiVyvazenie() > 0) {
 
-if(jetamdaco==true){  //odosle hlasenie do konzoly ked tam daco je
-  var hlasenie="riadky:";
-  for(b=0;b<26;b++){
-    if(riadky[b]==true){
-      hlasenie=hlasenie+b+"X";
-    }else{
-      hlasenie=hlasenie+b+"-";}
-  }
-  console.log(hlasenie);
-} 
+            for (var g = i; g > 0; g--) {
+              console.log("na riadok c:" + g + "sa presunie riadok cislo" + (g - 1));
+              zafixovane[g] = zafixovane[g - 1];
+              riadkyNaVymazanie[g] = riadkyNaVymazanie[g - 1]    //usporiada vstupne udaje kedze sa poposuvali riadky
+              i = 0;                  //pekne od zaciatku 
+            }
+            for (var u = 0; u < zafixovane[0].length; u++) { //vynulue vrchny riadok
+              zafixovane[0][u][1] = false;
+              zafixovane[0][u][0] = false;
+            }
+          } else {
+            for (var g = i; g < vyska - 1; g++) {
+              console.log("na riadok c:" + g + "sa presunie riadok cislo" + (g + 1));
+              zafixovane[g] = zafixovane[g + 1];
+              riadkyNaVymazanie[g] = riadkyNaVymazanie[g + 1]   //usporiada vstupne udaje kedze sa poposuvali riadky
+              i = 0;                  // od zaciatku
+            }
+            for (var u = 0; u < zafixovane[0].length; u++) { //vynulue spodny
+              zafixovane[vyska - 1][u][1] = false;
+              zafixovane[vyska - 1][u][0] = false;
+            }
+          }
 
-return riadky;
 
-}
+        }
 
-function spoj(celePole1,celePole2){
-var pomocna = new Array(vyska);
-  for (var i = 0; i < vyska; i++) {
-  pomocna[i] = new Array(sirka);
-     for (var r = 0; r < sirka; r++) {
-        pomocna[i][r] = new Array(2);
-        
-        if(celePole1[i][r][0] || celePole2[i][r][0]){pomocna[i][r][0] = true}else{pomocna[i][r][0] = false};
-        if(celePole1[i][r][1] || celePole2[i][r][1]){pomocna[i][r][1] = true}else{pomocna[i][r][1] = false};
+
+      }
+      VykresliToto(spoj(vlozNaPlatno(tvarTeraz, zlava, zhora, farba, otocenie), zafixovane));
+
+      skore = skore + pocetVymazanych * 100 * pocetVymazanych;
+      document.getElementById("skore").innerHTML = skore;
+      if (skore > hiskore) {
+        hiskore = skore;
+        document.getElementById("topSkore").innerHTML = hiskore;
+      }
+
     }
-  }
-
-    return pomocna;
-
-}
 
 
+    function najdiRiadky() {  //vypluje pole celych riadkov
 
-function tlacitkoLeft(){
-       if(!zistiKolizie()[2]){
-          zlava--;
-          VykresliToto(spoj(VlozNaPlatno(tvarTeraz,zlava,zhora,farba,otocenie),zafixovane));
+      var riadky = new Array();
+      var jetamdaco = false;
+      for (var i = 0; i < vyska; i++) {
+        riadky[i] = true;
+        for (var r = 0; r < sirka; r++) {
+          if (!zafixovane[i][r][0] && !zafixovane[i][r][1]) riadky[i] = false;
         }
-}
+        if (riadky[i] == true) jetamdaco = true;
+      }
 
-function tlacitkoRight(){
-        if(!zistiKolizie()[4]){
-          zlava++;
-          VykresliToto(spoj(VlozNaPlatno(tvarTeraz,zlava,zhora,farba,otocenie),zafixovane));
+
+
+      if (jetamdaco == true) {  //odosle hlasenie do konzoly ked tam daco je
+        var hlasenie = "riadky:";
+        for (b = 0; b < 26; b++) {
+          if (riadky[b] == true) {
+            hlasenie = hlasenie + b + "X";
+          } else {
+            hlasenie = hlasenie + b + "-";
+          }
         }
-}
+        console.log(hlasenie);
+      }
 
-function tlacitkoUp(){
-        var krocik= otocenie + 1; 
-        if( otocenie == 3 )krocik = 0;
+      return riadky;
 
-        if(!zistiKolizie()[5]){
-        otocenie=krocik;
-          tvarTerazVyska();
-          VykresliToto(spoj(VlozNaPlatno(tvarTeraz,zlava,zhora,farba,otocenie),zafixovane));
-        }else{
-            var posuvaj=[-1,1,-2,2, ];  //pozistuje ci v danom poradi nenajde cosi bez kolizie
-            var potlac=0;
-            var nasliRadcove=false;
+    }
 
-            for(var i=0; i<posuvaj.length; i++){
-              if(nasliRadcove==0){
-                if(!zistiPrekrytie( VlozNaPlatno( tvarTeraz, zlava+posuvaj[i],zhora,farba,krocik ), zafixovane ) && !zistiPrekrytieRamceka(tvarTeraz, zlava+posuvaj[i] ,zhora, krocik)){
-                   nasliRadcove=true;
-                   potlac=posuvaj[i];
-                }
-              }
-            }
+    function spoj(celePole1, celePole2) {
+      var pomocna = new Array(vyska);
+      for (var i = 0; i < vyska; i++) {
+        pomocna[i] = new Array(sirka);
+        for (var r = 0; r < sirka; r++) {
+          pomocna[i][r] = new Array(2);
 
-            if(nasliRadcove){
-             
-              zlava=zlava+potlac;
-              otocenie=krocik;
-          tvarTerazVyska();
-          VykresliToto(spoj(VlozNaPlatno(tvarTeraz,zlava,zhora,farba,krocik),zafixovane));
-            }
-          
+          if (celePole1[i][r][0] || celePole2[i][r][0]) { pomocna[i][r][0] = true } else { pomocna[i][r][0] = false };
+          if (celePole1[i][r][1] || celePole2[i][r][1]) { pomocna[i][r][1] = true } else { pomocna[i][r][1] = false };
         }
-}
+      }
 
-function tlacitkoPust(){
-        rychlost=skutocnaRychlost;
+      return pomocna;
 
-}
-
-function tlacitkoStlac(){
-          rychlost=zrychlene;
-}
+    }
 
 
-document.addEventListener('DOMContentLoaded', function () {  //spusti az po nacitani (casty 9 treba to osetrit)
-vytvorLCD();
-vytvorDalsieLCD();
-predStartom();
-}, false);
 
-document.addEventListener('keydown',function(event){ 
-  switch (event.key) {
-    case "ArrowLeft":
-        tlacitkoLeft();
-        break;
-    case "ArrowRight":
-        tlacitkoRight();
-        break;
-    case "ArrowUp":
-        tlacitkoUp();
-        break;
-    case "ArrowDown":
-        tlacitkoStlac();
-        break;
-    case "c":
-        if(tvarTeraz<6){tvarTeraz++;}else{tvarTeraz=0}
+    function tlacitkoLeft() {
+      if (!zistiKolizie()[2]) {
+        zlava--;
+        VykresliToto(spoj(vlozNaPlatno(tvarTeraz, zlava, zhora, farba, otocenie), zafixovane));
+      }
+    }
+
+    function tlacitkoRight() {
+      if (!zistiKolizie()[4]) {
+        zlava++;
+        VykresliToto(spoj(vlozNaPlatno(tvarTeraz, zlava, zhora, farba, otocenie), zafixovane));
+      }
+    }
+
+    function tlacitkoUp() {
+      var krocik = otocenie + 1;
+      if (otocenie == 3) krocik = 0;
+
+      if (!zistiKolizie()[5]) {
+        otocenie = krocik;
         tvarTerazVyska();
-        VykresliToto(spoj(VlozNaPlatno(tvarTeraz,zlava,zhora,farba,otocenie),zafixovane));
-        break;
-    case "p":
-        pauseStartRestart();
-        break;
+        VykresliToto(spoj(vlozNaPlatno(tvarTeraz, zlava, zhora, farba, otocenie), zafixovane));
+      } else {
+        var posuvaj = [-1, 1, -2, 2,];  //pozistuje ci v danom poradi nenajde cosi bez kolizie
+        var potlac = 0;
+        var nasliRadcove = false;
 
- }
-}, false);// tlacitka
-
-
-document.addEventListener('keyup',function(event){
-  switch (event.key) {
-
-    case "ArrowDown":
-        // pust
-    tlacitkoPust();
-     break;
-
-
-
- }
-}, false);
-
-
-
-function zistiVyvazenie(){
-var hornaMedzera=0,
-    dolnaMedzera=vyska;
-
-  for (var i = 0; i < vyska; i++) {
-     for (var r = 0; r <sirka; r++) {
-        if(zafixovane[i][r][0]||zafixovane[i][r][1]){
-              if(dolnaMedzera>=i)dolnaMedzera=i;
-              if(hornaMedzera<=i)hornaMedzera=i;
+        for (var i = 0; i < posuvaj.length; i++) {
+          if (nasliRadcove == 0) {
+            if (!zistiPrekrytie(vlozNaPlatno(tvarTeraz, zlava + posuvaj[i], zhora, farba, krocik), zafixovane) && !zistiPrekrytieRamceka(tvarTeraz, zlava + posuvaj[i], zhora, krocik)) {
+              nasliRadcove = true;
+              potlac = posuvaj[i];
+            }
+          }
         }
+
+        if (nasliRadcove) {
+
+          zlava = zlava + potlac;
+          otocenie = krocik;
+          tvarTerazVyska();
+          VykresliToto(spoj(vlozNaPlatno(tvarTeraz, zlava, zhora, farba, krocik), zafixovane));
+        }
+
+      }
     }
-  }
 
-//alert((vyska-hornaMedzera)-dolnaMedzera);
-return (vyska-hornaMedzera)-dolnaMedzera;
-}
+    function tlacitkoPust() {
+      rychlost = skutocnaRychlost;
 
-
-
-function centruj(){
-
-var riadky=new Array();
-
-  for (var i = 0; i < vyska; i++) {
-     riadky[i]=false;
-     for (var r = 0; r < sirka; r++) {
-        if(zafixovane[i][r][0]||zafixovane[i][r][1])riadky[i]=true;
     }
-  }
+
+    function tlacitkoStlac() {
+      rychlost = zrychlene;
+    }
+
+
+    document.addEventListener('DOMContentLoaded', function () {  //spusti az po nacitani (casty 9 treba to osetrit)
+      vytvorLCD();
+      vytvorDalsieLCD();
+      predStartom();
+    }, false);
+
+    document.addEventListener('keydown', function (event) {
+      switch (event.key) {
+        case "ArrowLeft":
+          tlacitkoLeft();
+          break;
+        case "ArrowRight":
+          tlacitkoRight();
+          break;
+        case "ArrowUp":
+          tlacitkoUp();
+          break;
+        case "ArrowDown":
+          tlacitkoStlac();
+          break;
+        case "c":
+          if (tvarTeraz < 6) { tvarTeraz++; } else { tvarTeraz = 0 }
+          tvarTerazVyska();
+          VykresliToto(spoj(vlozNaPlatno(tvarTeraz, zlava, zhora, farba, otocenie), zafixovane));
+          break;
+        case "p":
+          pauseStartRestart();
+          break;
+
+      }
+    }, false);// tlacitka
+
+
+    document.addEventListener('keyup', function (event) {
+      switch (event.key) {
+
+        case "ArrowDown":
+          // pust
+          tlacitkoPust();
+          break;
 
 
 
-var posunutOtolkoto = Math.floor(vysoke/2) - (Math.floor((hornaMedzera-dolnaMedzera)/2)+dolnaMedzera) ; //odcita od stredu stred zlepenca 
-return posunutOtolkoto;
-}
+      }
+    }, false);
+
+
+
+    function zistiVyvazenie() {
+      var hornaMedzera = 0,
+        dolnaMedzera = vyska;
+
+      for (var i = 0; i < vyska; i++) {
+        for (var r = 0; r < sirka; r++) {
+          if (zafixovane[i][r][0] || zafixovane[i][r][1]) {
+            if (dolnaMedzera >= i) dolnaMedzera = i;
+            if (hornaMedzera <= i) hornaMedzera = i;
+          }
+        }
+      }
+
+      //alert((vyska-hornaMedzera)-dolnaMedzera);
+      return (vyska - hornaMedzera) - dolnaMedzera;
+    }
+
+
+
+    function centruj() {
+
+      var riadky = new Array();
+
+      for (var i = 0; i < vyska; i++) {
+        riadky[i] = false;
+        for (var r = 0; r < sirka; r++) {
+          if (zafixovane[i][r][0] || zafixovane[i][r][1]) riadky[i] = true;
+        }
+      }
+
+
+
+      var posunutOtolkoto = Math.floor(vysoke / 2) - (Math.floor((hornaMedzera - dolnaMedzera) / 2) + dolnaMedzera); //odcita od stredu stred zlepenca 
+      return posunutOtolkoto;
+    }
 
 
 
 
-var casMinuly=0;
-function updatni(time=0){  //time=0 pri prvom volani bez dat a hodnota time je vlozena z toho skriptu
+    var casMinuly = 0;
+    function updatni(time = 0) {  //time=0 pri prvom volani bez dat a hodnota time je vlozena z toho skriptu
 
-if((time>casMinuly+rychlost)){
+      if ((time > casMinuly + rychlost)) {
         gameOverDetectorPrepadnutia();
-               //console.log(farba);
-        casMinuly=time;
+        //console.log(farba);
+        casMinuly = time;
 
-        if(pulsovaci){pulsovaci=false}else{pulsovaci=true}
-
-        
-
-        document.getElementById("levelhodnota").innerHTML=level;
+        if (pulsovaci) { pulsovaci = false } else { pulsovaci = true }
 
 
-        if(gameover){
-          if(pulsovaci){
-            document.getElementById("gameover").style.color="rgba(0,20,40, 0.7)";
-            }else{
-            document.getElementById("gameover").style.color="rgba(0,20,40, 0.2)";
+
+        document.getElementById("levelhodnota").innerHTML = level;
+
+
+        if (gameover) {
+          if (pulsovaci) {
+            document.getElementById("gameover").style.color = "rgba(0,20,40, 0.7)";
+          } else {
+            document.getElementById("gameover").style.color = "rgba(0,20,40, 0.2)";
           }
-        }else{document.getElementById("gameover").style.color="rgba(0,20,40, 0.2)";}
+        } else { document.getElementById("gameover").style.color = "rgba(0,20,40, 0.2)"; }
 
-        if(pause){
-          if(pulsovaci){
+        if (pause) {
+          if (pulsovaci) {
 
-            document.getElementById("pause").style.color="rgba(0,20,40, 0.7)";
-            }else{
-            document.getElementById("pause").style.color="rgba(0,20,40, 0.2)";
+            document.getElementById("pause").style.color = "rgba(0,20,40, 0.7)";
+          } else {
+            document.getElementById("pause").style.color = "rgba(0,20,40, 0.2)";
           }
-        }else{document.getElementById("pause").style.color="rgba(0,20,40, 0.2)";}
+        } else { document.getElementById("pause").style.color = "rgba(0,20,40, 0.2)"; }
 
-          if(!gameover&&!pause){
-          if(farba==1){     
-                    
-               if(zistiKolizie()[1]){
-                zafixovane=spoj(VlozNaPlatno(tvarTeraz,zlava,zhora,farba,otocenie),zafixovane);
-                gameOverDetector();
-                losujTvar();
-                VykresliTotoMale(tvary[tvarPrichystany]);
+        if (!gameover && !pause) {
+          if (farba == 1) {
 
-                pocetDopadov++;
-                if(pocetDopadov>zrychliPo){
-                  zrychlovanie();
-                  pocetDopadov=0;
-                }
+            if (zistiKolizie()[1]) {
+              zafixovane = spoj(vlozNaPlatno(tvarTeraz, zlava, zhora, farba, otocenie), zafixovane);
+              gameOverDetector();
+              losujTvar();
+              VykresliTotoMale(tvary[tvarPrichystany]);
 
-                zhora=vyska+tvarTerazVyska()-1;
-                zlava=3;
-                farba=0;
-                otocenie=0;
-                
-                vymazCeleRiadky();
+              pocetDopadov++;
+              if (pocetDopadov > zrychliPo) {
+                zrychlovanie();
+                pocetDopadov = 0;
+              }
 
-               }else{
-               zhora++;  
-               VykresliToto(spoj(VlozNaPlatno(tvarTeraz,zlava,zhora,farba,otocenie),zafixovane));
-               
-               }
-           }else{
-                             
-               if(zistiKolizie()[3]){
-                zafixovane=spoj(VlozNaPlatno(tvarTeraz,zlava,zhora,farba,otocenie),zafixovane);
-                gameOverDetector();
-                losujTvar();
-                VykresliTotoMale(tvary[tvarPrichystany]);
+              zhora = vyska + tvarTerazVyska() - 1;
+              zlava = 3;
+              farba = 0;
+              otocenie = 0;
 
-                pocetDopadov++;
-                if(pocetDopadov>zrychliPo){
-                  zrychlovanie();
-                  pocetDopadov=0;
-                }
+              vymazCeleRiadky();
 
-                zhora=0-tvarTerazVyska()+1;
-                zlava=3;
-                farba=1;
-                otocenie=0;
-                
-                vymazCeleRiadky();
+            } else {
+              zhora++;
+              VykresliToto(spoj(vlozNaPlatno(tvarTeraz, zlava, zhora, farba, otocenie), zafixovane));
 
-               }else{
-               zhora--; 
-               VykresliToto(spoj(VlozNaPlatno(tvarTeraz,zlava,zhora,farba,otocenie),zafixovane));
-               }
-           }
-       }
-      
-   }
+            }
+          } else {
 
-requestAnimationFrame(updatni); // vola funkciu updatni v okamihu refreshu obrazovky
-}
-updatni(); //prvy raz zavola
+            if (zistiKolizie()[3]) {
+              zafixovane = spoj(vlozNaPlatno(tvarTeraz, zlava, zhora, farba, otocenie), zafixovane);
+              gameOverDetector();
+              losujTvar();
+              VykresliTotoMale(tvary[tvarPrichystany]);
 
-/*
-var a = {}
-a.b = function(){return "b";}
-console.log(a.b());
+              pocetDopadov++;
+              if (pocetDopadov > zrychliPo) {
+                zrychlovanie();
+                pocetDopadov = 0;
+              }
 
-*/
+              zhora = 0 - tvarTerazVyska() + 1;
+              zlava = 3;
+              farba = 1;
+              otocenie = 0;
 
+              vymazCeleRiadky();
 
-
-function VykresliToto(policicko){
-    var pocitadlo=0;
-for (var i = 0; i < vyska; i++){         
-
-  for (var z = 0; z < sirka; z++){
-
-  if(policicko[i][z][0]==1){document.getElementById(pocitadlo+"ramcek").style.borderColor="rgba(0,20,40, 0.7)";
-      }else{
-        document.getElementById(pocitadlo+"ramcek").style.borderColor="rgba(0,0,100, 0.1)";}
-  if(policicko[i][z][1]==1){document.getElementById(pocitadlo+"bodka").style.backgroundColor="rgba(0,20,40, 0.7)";
-      }else{
-        document.getElementById(pocitadlo+"bodka").style.backgroundColor="rgba(0,0,100, 0.1)";}
-    pocitadlo++;
-      }
-   } 
-}
-
-function VykresliTotoMale(policicko){
-    var pocitadlo=0;
-
-
-for (var i = 0; i < 4; i++){         
-
-  for (var z = 0; z < 4; z++){
-if(i<policicko.length&&z<policicko[0].length){
-  if(policicko[i][z]==1){
-
-       if(farba==1){
-          document.getElementById("male"+pocitadlo+"bodka").style.backgroundColor="rgba(0,20,40, 0.7)";
-        }else{
-          document.getElementById("male"+pocitadlo+"bodka").style.backgroundColor="rgba(0,0,100, 0.1)";
+            } else {
+              zhora--;
+              VykresliToto(spoj(vlozNaPlatno(tvarTeraz, zlava, zhora, farba, otocenie), zafixovane));
+            }
+          }
         }
 
-        document.getElementById("male"+pocitadlo+"ramcek").style.borderColor="rgba(0,20,40, 0.7)";
-    //    document.getElementById("male"+pocitadlo+"bodka").style.backgroundColor="rgba(0,0,100, 0.1)";
-      }else{
-        document.getElementById("male"+pocitadlo+"ramcek").style.borderColor="rgba(0,0,100, 0.1)";
-        document.getElementById("male"+pocitadlo+"bodka").style.backgroundColor="rgba(0,0,100, 0.1)";
-      }
-   }else{
-        document.getElementById("male"+pocitadlo+"ramcek").style.borderColor="rgba(0,0,100, 0.1)";
-        document.getElementById("male"+pocitadlo+"bodka").style.backgroundColor="rgba(0,0,100, 0.1)";
-   }
-
-    pocitadlo++;
-
       }
 
-   } 
-}
-
-
-function vytvorLCD(){  //iba pri spusteni !!!
-
-    var text="";
-    var pocitadlo=0;
-
-  for (var i = 0; i < vyska; i++){ 
-  text=text+"<div class='riadok'>";//koli tomu aby sa prisposobila sirka nadradeneho elementu        
-  for (var z = 0; z < sirka; z++){
-    text=text+"<div class='ramcek' id='"+pocitadlo+"ramcek'><div class='bodka' id='"+pocitadlo+"bodka'></div></div>";
-    pocitadlo++;
-      }text=text+"</div>";
+      requestAnimationFrame(updatni); // vola funkciu updatni v okamihu refreshu obrazovky
     }
-    document.getElementById("pole").innerHTML = text; 
+    updatni(); //prvy raz zavola
 
- }
+    function VykresliToto(policicko) {
+      var pocitadlo = 0;
+      for (var i = 0; i < vyska; i++) {
 
- function vytvorDalsieLCD(){
-    var text="";
-    var pocitadlo=0;
+        for (var z = 0; z < sirka; z++) {
 
-  for (var i = 0; i < 4; i++){ 
-  text=text+"<div class='riadok'>";//koli tomu aby sa prisposobila sirka nadradeneho elementu        
-  for (var z = 0; z < 4; z++){
-    text=text+"<div class='ramcek' id='male"+pocitadlo+"ramcek'><div class='bodka' id='male"+pocitadlo+"bodka'></div></div>";
-    pocitadlo++;
-      }text=text+"</div>";
+          if (policicko[i][z][0] == 1) {
+            document.getElementById(pocitadlo + "ramcek").style.borderColor = "rgba(0,20,40, 0.7)";
+          } else {
+            document.getElementById(pocitadlo + "ramcek").style.borderColor = "rgba(0,0,100, 0.1)";
+          }
+          if (policicko[i][z][1] == 1) {
+            document.getElementById(pocitadlo + "bodka").style.backgroundColor = "rgba(0,20,40, 0.7)";
+          } else {
+            document.getElementById(pocitadlo + "bodka").style.backgroundColor = "rgba(0,0,100, 0.1)";
+          }
+          pocitadlo++;
+        }
+      }
     }
-    document.getElementById("dalsiePole").innerHTML = text; 
- }
+
+    function VykresliTotoMale(policicko) {
+      var pocitadlo = 0;
 
 
- function tvarTerazVyska(){
-  tvarVyska=tvary[tvarTeraz].length;
-  return tvarVyska;
- }
+      for (var i = 0; i < 4; i++) {
 
+        for (var z = 0; z < 4; z++) {
+          if (i < policicko.length && z < policicko[0].length) {
+            if (policicko[i][z] == 1) {
 
+              if (farba == 1) {
+                document.getElementById("male" + pocitadlo + "bodka").style.backgroundColor = "rgba(0,20,40, 0.7)";
+              } else {
+                document.getElementById("male" + pocitadlo + "bodka").style.backgroundColor = "rgba(0,0,100, 0.1)";
+              }
 
- function losujTvar(){
-  var tvaro=Math.floor(Math.random() * 7);
-  tvarTeraz=tvarPrichystany; 
-  tvarPrichystany=tvaro;
-  
- }
+              document.getElementById("male" + pocitadlo + "ramcek").style.borderColor = "rgba(0,20,40, 0.7)";
+              //    document.getElementById("male"+pocitadlo+"bodka").style.backgroundColor="rgba(0,0,100, 0.1)";
+            } else {
+              document.getElementById("male" + pocitadlo + "ramcek").style.borderColor = "rgba(0,0,100, 0.1)";
+              document.getElementById("male" + pocitadlo + "bodka").style.backgroundColor = "rgba(0,0,100, 0.1)";
+            }
+          } else {
+            document.getElementById("male" + pocitadlo + "ramcek").style.borderColor = "rgba(0,0,100, 0.1)";
+            document.getElementById("male" + pocitadlo + "bodka").style.backgroundColor = "rgba(0,0,100, 0.1)";
+          }
 
-function gameOverDetector(){
- for(i=0; i<sirka; i++){
-    if(zafixovane[0][i][0]||zafixovane[0][i][1]||zafixovane[vyska-1][i][1]||zafixovane[vyska-1][i][0])gameover=true;
-  }
-}
+          pocitadlo++;
 
-
-function pauseStartRestart(){
-
-if(!pause&&!gameover){pause=true}else{
-  if(pause&&!gameover){pause=false}
-}
- 
-  if(gameover){//reset
-    skore=0;
-    document.getElementById("skore").innerHTML=skore;
-
-var pomo=vytvorStandardnePole(function(f,t,g){ //vytvori prazdne pole a nadstavi false
-  f[t][g][0]=false;          
-  f[t][g][1]=false;
-});
-    zafixovane=pomo;
-
-    predStartom();
-    gameover=false;
-  };
-}
-
-function gameOverDetectorPrepadnutia(){
-  var farbi=0;
-  var nahraska=VlozNaPlatno(tvarTeraz,zlava,zhora,farba,otocenie);
-  if(farba==0){farbi=vyska-1}else{farbi=0}
-  for(i=0; i<sirka; i++){
-    if(farba==0)if(nahraska[0][i][0])gameover=true;
-    if(farba==1)if(nahraska[vyska-1][i][1])gameover=true;
-  }
-
-}
-
-function zrychlovanie(){
-skutocnaRychlost=skutocnaRychlost - skokZrychlenia;
-console.log("skutocnaRychlost"+skutocnaRychlost);
-level++;
-}
-
-</script>
-<style>
-body{background-color:black; background-repeat:no-repeat; text-align: center; display: flex; justify-content: center;}
-
-.popisok{position:absolute;
-         display:block;
-         font-family:arial;
-         font-size: 8px;
-         font-weight:bold;
-}
-#popisokpause{top:497px; left:284px;}
-#popisokMod{  top:517px; left:253px;}
-#popisokRoate{top:540px; left:165px;}
-#popisokLeft{ top:643px; left:50px;}
-#popisokLay{  top:643px; left:165px;}
-#popisokRight{top:643px; left:285px;}
-.tlacitko{background: #aa3333;
-          border: solid 5px #222222;
-          width: 45px; height:45px;padding: 8px;
-          border-radius: 25px;
-          box-shadow:
-          0px  3px 6px rgba(255,255,255, 0.4) inset,
-          0px  3px 3px rgba(255,0,0, 0.9) inset,
-          0px -2px 9px rgba(0,0,0, 0.6) inset,
-          0px 1px 2px rgba(255,255,255, 1),
-          0px -2px 2px rgba(0,0,0, 1);
-          position:absolute;
         }
 
-#lavet{top:465px;left:145px;}
-#pravet{top:565px;left:25px;}
-#dolet{top:565px;left:145px;}
-#horet{top:565px;left:260px;}
+      }
+    }
 
-.maletlacitko{
-        background: #999999;
-        border: solid 3px #222222;
-        width: 12px; height:0px;padding: 6px;
-        border-radius: 10px;
-        box-shadow:
-        0px  3px 3px rgba(255,255,255, 0.4) inset,
-        0px -2px 3px rgba(0,0,0, 0.6) inset,
-        0px 1px 2px rgba(255,255,255, 1),
-        0px -2px 1px rgba(0,0,0, 1);
-        position:absolute;
-}
-#vertikalnecentrovanie{
-  margin: 0;
-  position: absolute;
-  top: 50%;
-  -ms-transform: translateY(-50%);
-  transform: translateY(-50%);
-}
 
-#male1{top:471px;
-        left:288px;}
-#male2{top:491px;
-        left:240px;}
+    function vytvorLCD() {  //iba pri spusteni !!!
 
-.vpadnutetlacitko{
-        background: #555555;
-        width: 14px; height:14px;;
-        border-radius: 14px;
-        box-shadow:
-        0px 5px 5px rgba(0,0,0, 0.4) inset,
-        0px 5px 1px rgba(0,0,0, 0.4) inset,
-        0px -2px 2px rgba(0,0,0, 0.8),  
-        0px 2px 2px rgba(255,255,255, 0.8);       
-        position:absolute;
-        top:495px;
-        left:255px;
-}
+      var text = "";
+      var pocitadlo = 0;
 
-#textnad{background-color: #7E7d72; padding-left:8px; padding-right:8px; letter-spacing: 2px; position:absolute; display:block; left:103px; top:10px; font-family:arial; font-size: 10px; font-weight:bold; color:#881111;}
+      for (var i = 0; i < vyska; i++) {
+        text = text + "<div class='riadok'>";//koli tomu aby sa prisposobila sirka nadradeneho elementu        
+        for (var z = 0; z < sirka; z++) {
+          text = text + "<div class='ramcek' id='" + pocitadlo + "ramcek'><div class='bodka' id='" + pocitadlo + "bodka'></div></div>";
+          pocitadlo++;
+        } text = text + "</div>";
+      }
+      document.getElementById("pole").innerHTML = text;
 
-#plech:before {
-    position:absolute;
-    border-radius:33px;
-    content: '';
-    border:solid #aa3333 1.5px ;
+    }
 
-    border-bottom:solid #7a0303 1.5px;
-    border-left:  solid #8a1313 1.5px;
-    border-right: solid #8a1313 1.5px;
+    function vytvorDalsieLCD() {
+      var text = "";
+      var pocitadlo = 0;
 
-    top: -4px;
-    right: -4px;
-    bottom: -4px;
-    left: -4px;
-}
+      for (var i = 0; i < 4; i++) {
+        text = text + "<div class='riadok'>";//koli tomu aby sa prisposobila sirka nadradeneho elementu        
+        for (var z = 0; z < 4; z++) {
+          text = text + "<div class='ramcek' id='male" + pocitadlo + "ramcek'><div class='bodka' id='male" + pocitadlo + "bodka'></div></div>";
+          pocitadlo++;
+        } text = text + "</div>";
+      }
+      document.getElementById("dalsiePole").innerHTML = text;
+    }
 
-#ramcecek{
-    position:relative;
-    border-radius:34px;
-    border:solid #ffffff 1px ;
-  }
 
-#plech{ background-color: #7E7d72;
-  padding:20px;
-  width:315px;height:620px;
-         border-radius: 30px;
-        box-shadow:
-        0px 3px 8px rgba(0,0,0, 1),  
-        0px -3px 4px rgba(255,255,255, 0.7),
-        0px -5px 8px rgba(0,0,0, 0.4)inset,
-        0px -3px 4px rgba(0,0,0, 0.5)inset,     
-        0px -10px 16px rgba(255,255,255, 0.3)inset;   
-        position:relative;
-}
-#ram2{
-    text-align: left;
-    position:relative;
-    border-radius:25px;
-    margin-top:-5px;
-    margin-left:-5px;
-    padding:25px;
-    width:275px;
-    background-color: #7E7d72;
+    function tvarTerazVyska() {
+      tvarVyska = tvary[tvarTeraz].length;
+      return tvarVyska;
+    }
 
-    /*
+
+
+    function losujTvar() {
+      var tvaro = Math.floor(Math.random() * 7);
+      tvarTeraz = tvarPrichystany;
+      tvarPrichystany = tvaro;
+
+    }
+
+    function gameOverDetector() {
+      for (i = 0; i < sirka; i++) {
+        if (zafixovane[0][i][0] || zafixovane[0][i][1] || zafixovane[vyska - 1][i][1] || zafixovane[vyska - 1][i][0]) gameover = true;
+      }
+    }
+
+
+    function pauseStartRestart() {
+
+      if (!pause && !gameover) { pause = true } else {
+        if (pause && !gameover) { pause = false }
+      }
+
+      if (gameover) {//reset
+        skore = 0;
+        document.getElementById("skore").innerHTML = skore;
+
+        var pomo = vytvorStandardnePole(function (f, t, g) { //vytvori prazdne pole a nadstavi false
+          f[t][g][0] = false;
+          f[t][g][1] = false;
+        });
+        zafixovane = pomo;
+
+        predStartom();
+        gameover = false;
+      };
+    }
+
+    function gameOverDetectorPrepadnutia() {
+      var farbi = 0;
+      var nahraska = vlozNaPlatno(tvarTeraz, zlava, zhora, farba, otocenie);
+      if (farba == 0) { farbi = vyska - 1 } else { farbi = 0 }
+      for (i = 0; i < sirka; i++) {
+        if (farba == 0) if (nahraska[0][i][0]) gameover = true;
+        if (farba == 1) if (nahraska[vyska - 1][i][1]) gameover = true;
+      }
+
+    }
+
+    function zrychlovanie() {
+      skutocnaRychlost = skutocnaRychlost - skokZrychlenia;
+      console.log("skutocnaRychlost" + skutocnaRychlost);
+      level++;
+    }
+
+  </script>
+  <style>
+    body {
+      background-color: black;
+      background-repeat: no-repeat;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+    }
+
+    .popisok {
+      position: absolute;
+      display: block;
+      font-family: arial;
+      font-size: 8px;
+      font-weight: bold;
+    }
+
+    #popisokpause {
+      top: 497px;
+      left: 284px;
+    }
+
+    #popisokMod {
+      top: 517px;
+      left: 253px;
+    }
+
+    #popisokRoate {
+      top: 540px;
+      left: 165px;
+    }
+
+    #popisokLeft {
+      top: 643px;
+      left: 50px;
+    }
+
+    #popisokLay {
+      top: 643px;
+      left: 165px;
+    }
+
+    #popisokRight {
+      top: 643px;
+      left: 285px;
+    }
+
+    .tlacitko {
+      background: #aa3333;
+      border: solid 5px #222222;
+      width: 45px;
+      height: 45px;
+      padding: 8px;
+      border-radius: 25px;
+      box-shadow:
+        0px 3px 6px rgba(255, 255, 255, 0.4) inset,
+        0px 3px 3px rgba(255, 0, 0, 0.9) inset,
+        0px -2px 9px rgba(0, 0, 0, 0.6) inset,
+        0px 1px 2px rgba(255, 255, 255, 1),
+        0px -2px 2px rgba(0, 0, 0, 1);
+      position: absolute;
+    }
+
+    #lavet {
+      top: 465px;
+      left: 145px;
+    }
+
+    #pravet {
+      top: 565px;
+      left: 25px;
+    }
+
+    #dolet {
+      top: 565px;
+      left: 145px;
+    }
+
+    #horet {
+      top: 565px;
+      left: 260px;
+    }
+
+    .maletlacitko {
+      background: #999999;
+      border: solid 3px #222222;
+      width: 12px;
+      height: 0px;
+      padding: 6px;
+      border-radius: 10px;
+      box-shadow:
+        0px 3px 3px rgba(255, 255, 255, 0.4) inset,
+        0px -2px 3px rgba(0, 0, 0, 0.6) inset,
+        0px 1px 2px rgba(255, 255, 255, 1),
+        0px -2px 1px rgba(0, 0, 0, 1);
+      position: absolute;
+    }
+
+    #vertikalnecentrovanie {
+      margin: 0;
+      position: absolute;
+      top: 50%;
+      -ms-transform: translateY(-50%);
+      transform: translateY(-50%);
+    }
+
+    #male1 {
+      top: 471px;
+      left: 288px;
+    }
+
+    #male2 {
+      top: 491px;
+      left: 240px;
+    }
+
+    .vpadnutetlacitko {
+      background: #555555;
+      width: 14px;
+      height: 14px;
+      ;
+      border-radius: 14px;
+      box-shadow:
+        0px 5px 5px rgba(0, 0, 0, 0.4) inset,
+        0px 5px 1px rgba(0, 0, 0, 0.4) inset,
+        0px -2px 2px rgba(0, 0, 0, 0.8),
+        0px 2px 2px rgba(255, 255, 255, 0.8);
+      position: absolute;
+      top: 495px;
+      left: 255px;
+    }
+
+    #textnad {
+      background-color: #7E7d72;
+      padding-left: 8px;
+      padding-right: 8px;
+      letter-spacing: 2px;
+      position: absolute;
+      display: block;
+      left: 103px;
+      top: 10px;
+      font-family: arial;
+      font-size: 10px;
+      font-weight: bold;
+      color: #881111;
+    }
+
+    #plech:before {
+      position: absolute;
+      border-radius: 33px;
+      content: '';
+      border: solid #aa3333 1.5px;
+
+      border-bottom: solid #7a0303 1.5px;
+      border-left: solid #8a1313 1.5px;
+      border-right: solid #8a1313 1.5px;
+
+      top: -4px;
+      right: -4px;
+      bottom: -4px;
+      left: -4px;
+    }
+
+    #ramcecek {
+      position: relative;
+      border-radius: 34px;
+      border: solid #ffffff 1px;
+    }
+
+    #plech {
+      background-color: #7E7d72;
+      padding: 20px;
+      width: 315px;
+      height: 620px;
+      border-radius: 30px;
+      box-shadow:
+        0px 3px 8px rgba(0, 0, 0, 1),
+        0px -3px 4px rgba(255, 255, 255, 0.7),
+        0px -5px 8px rgba(0, 0, 0, 0.4)inset,
+        0px -3px 4px rgba(0, 0, 0, 0.5)inset,
+        0px -10px 16px rgba(255, 255, 255, 0.3)inset;
+      position: relative;
+    }
+
+    #ram2 {
+      text-align: left;
+      position: relative;
+      border-radius: 25px;
+      margin-top: -5px;
+      margin-left: -5px;
+      padding: 25px;
+      width: 275px;
+      background-color: #7E7d72;
+
+      /*
     border-top: solid rgba(100,100,100,0.5) 15px;
     border-right: solid rgba(0,0,100,0) 15px;
     border-left: solid rgba(0,0,100,0) 15px;
     border-bottom: solid rgba(0,30,100,1) 15px;
     */
-    box-shadow:
-    0px  4px 12px rgba(255,255,255, 0.4) inset ,
-    0px  -4px 12px rgba(255,255,255, 0.4),
+      box-shadow:
+        0px 4px 12px rgba(255, 255, 255, 0.4) inset,
+        0px -4px 12px rgba(255, 255, 255, 0.4),
 
-    0px  4px 12px rgba(0,0,0, 0.4)  ,
-    0px  -4px 12px rgba(0,0,0, 0.4) inset;
-   }
+        0px 4px 12px rgba(0, 0, 0, 0.4),
+        0px -4px 12px rgba(0, 0, 0, 0.4) inset;
+    }
+
     /*box-shadow: 
     0 0 0 10px hsl(0, 0%, 50%),
     0 0 0 15px hsl(0, 0%, 60%),
@@ -941,138 +1005,226 @@ body{background-color:black; background-repeat:no-repeat; text-align: center; di
     0 0 0 25px hsl(0, 0%, 80%),
     0 0 0 30px hsl(0, 0%, 90%);*/
 
-#ram2:before{
-    position:absolute;
-    border-radius:20px;
-    content: '';
-    border:solid #111111 2px ;
-    top: 15px;
-    right: 15px;
-    bottom: 13px;
-    left: 13px;
-  }
+    #ram2:before {
+      position: absolute;
+      border-radius: 20px;
+      content: '';
+      border: solid #111111 2px;
+      top: 15px;
+      right: 15px;
+      bottom: 13px;
+      left: 13px;
+    }
 
 
-#ram{
-     border: 12px solid #111111;
-     border-radius: 15px; 
-     position:relative;
-     width:248px;
-     background-color:#AABBAA;
-   }
+    #ram {
+      border: 12px solid #111111;
+      border-radius: 15px;
+      position: relative;
+      width: 248px;
+      background-color: #AABBAA;
+    }
 
-#ram:before {
-    border-radius:6px;
-    border-right: 1px solid #555555;
-    border-left: 1px solid #555555; 
-    border-bottom: 1px solid #888888; 
-    content: '';
-    position: absolute;
-    top: -2px;
-    right: -2px;
-    bottom: -2px;
-    left: -2px;
-}
+    #ram:before {
+      border-radius: 6px;
+      border-right: 1px solid #555555;
+      border-left: 1px solid #555555;
+      border-bottom: 1px solid #888888;
+      content: '';
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      bottom: -2px;
+      left: -2px;
+    }
 
-#ram:after {
-    border-radius:14px;
-    border-left: 1px solid #555555;
-    border-right: 1px solid #555555;
-    border-top: 1px solid #888888; ;
-    content: '';
-    position: absolute;
-    top: -11px;
-    right: -11px;
-    bottom: -11px;
-    left: -11px;
+    #ram:after {
+      border-radius: 14px;
+      border-left: 1px solid #555555;
+      border-right: 1px solid #555555;
+      border-top: 1px solid #888888;
+      ;
+      content: '';
+      position: absolute;
+      top: -11px;
+      right: -11px;
+      bottom: -11px;
+      left: -11px;
 
-    box-shadow:
-    0px  10px 15px rgba(0,0,0, 0.9) inset,
-    10px  0px 15px rgba(0,0,0, 0.9) inset,
-   -10px  0px 15px rgba(0,0,0, 0.9) inset;
-}
+      box-shadow:
+        0px 10px 15px rgba(0, 0, 0, 0.9) inset,
+        10px 0px 15px rgba(0, 0, 0, 0.9) inset,
+        -10px 0px 15px rgba(0, 0, 0, 0.9) inset;
+    }
 
-#gameover{position:absolute;font-size: 10px; color:rgba(0,20,40, 0.7); top:30px; left:157px;}
-#skorePopis{position:absolute;font-size: 14px; color:rgba(0,20,40, 0.7); top:60px; left:161px;}
-#skore{position:absolute;font-size: 14px; color:rgba(0,20,40, 0.7); top:75px; left:154px; text-align: right; width:60px}
-#topSkorePopis{position:absolute;font-size: 14px; color:rgba(0,20,40, 0.7); top:100px; left:154px}
-#topSkore{position:absolute;font-size: 14px; color:rgba(0,20,40, 0.7); top:115px; left:154px; text-align: right; width:60px}
-#level{position:absolute;font-size: 14px; color:rgba(0,20,40, 0.7); top:230px; left:160px;}
+    #gameover {
+      position: absolute;
+      font-size: 10px;
+      color: rgba(0, 20, 40, 0.7);
+      top: 30px;
+      left: 157px;
+    }
 
-#music{position:absolute;font-size: 14px; color:rgba(0,20,40, 0.1); top:300px; left:160px;}
-#pause{position:absolute;font-size: 14px; color:rgba(0,20,40, 0.7); top:325px; left:165px;}
+    #skorePopis {
+      position: absolute;
+      font-size: 14px;
+      color: rgba(0, 20, 40, 0.7);
+      top: 60px;
+      left: 161px;
+    }
 
-#pole{margin:20px; position: relative; font-size: 0px; border:solid rgba(0,0,100,0.4) 1px; padding:2px; width:200px;   }
-#dalsiePole{font-size:0px; position:absolute; border:solid rgba(0,0,100,0.4) 1px; padding:1px; width:48px; top: 160px; left:160px;}
+    #skore {
+      position: absolute;
+      font-size: 14px;
+      color: rgba(0, 20, 40, 0.7);
+      top: 75px;
+      left: 154px;
+      text-align: right;
+      width: 60px
+    }
 
-.riadok{display:inline-block;}
-.ramcek{font-size: 0px; border:solid rgba(0,0,100, 0.1) 2px; margin:1px; padding:0px; width:6px; height:6px; display:inline-block;
-/*-webkit-box-shadow: 2px 1px 3px -1px rgba(0,0,0,0.1);
+    #topSkorePopis {
+      position: absolute;
+      font-size: 14px;
+      color: rgba(0, 20, 40, 0.7);
+      top: 100px;
+      left: 154px
+    }
+
+    #topSkore {
+      position: absolute;
+      font-size: 14px;
+      color: rgba(0, 20, 40, 0.7);
+      top: 115px;
+      left: 154px;
+      text-align: right;
+      width: 60px
+    }
+
+    #level {
+      position: absolute;
+      font-size: 14px;
+      color: rgba(0, 20, 40, 0.7);
+      top: 230px;
+      left: 160px;
+    }
+
+    #music {
+      position: absolute;
+      font-size: 14px;
+      color: rgba(0, 20, 40, 0.1);
+      top: 300px;
+      left: 160px;
+    }
+
+    #pause {
+      position: absolute;
+      font-size: 14px;
+      color: rgba(0, 20, 40, 0.7);
+      top: 325px;
+      left: 165px;
+    }
+
+    #pole {
+      margin: 20px;
+      position: relative;
+      font-size: 0px;
+      border: solid rgba(0, 0, 100, 0.4) 1px;
+      padding: 2px;
+      width: 200px;
+    }
+
+    #dalsiePole {
+      font-size: 0px;
+      position: absolute;
+      border: solid rgba(0, 0, 100, 0.4) 1px;
+      padding: 1px;
+      width: 48px;
+      top: 160px;
+      left: 160px;
+    }
+
+    .riadok {
+      display: inline-block;
+    }
+
+    .ramcek {
+      font-size: 0px;
+      border: solid rgba(0, 0, 100, 0.1) 2px;
+      margin: 1px;
+      padding: 0px;
+      width: 6px;
+      height: 6px;
+      display: inline-block;
+      /*-webkit-box-shadow: 2px 1px 3px -1px rgba(0,0,0,0.1);
 -moz-box-shadow: 2px 1px 3px -1px rgba(0,0,0,0.1);
 box-shadow: 2px 1px 3px -1px rgba(0,0,0,0.1);
 -webkit-border-radius: 1px;
 -moz-border-radius: 1px;
 border-radius: 1px;*/
-}
-.bodka{background-color:rgba(0,0,100, 0.4); margin:1px; padding:0px; width:4px; height:4px;
-/*-webkit-box-shadow: 2px 1px 3px -1px rgba(0,0,0,0.1);
+    }
+
+    .bodka {
+      background-color: rgba(0, 0, 100, 0.4);
+      margin: 1px;
+      padding: 0px;
+      width: 4px;
+      height: 4px;
+      /*-webkit-box-shadow: 2px 1px 3px -1px rgba(0,0,0,0.1);
 -moz-box-shadow:2px 1px 3px -1px rgba(0,0,0,0.1);
 box-shadow: 2px 1px 3px -1px rgba(0,0,0,0.1);
 -webkit-border-radius: 1px;
 -moz-border-radius: 1px;
 border-radius: 1px;*/
-}
-
-}
-</style>
+    }
+  </style>
 </head>
+
 <body>
-<div id="vertikalnecentrovanie">
-<div id="ramcecek" >
-<div id="plech" >
-  <div class="tlacitko" id="lavet"  ontouchstart="tlacitkoUp();" ></div>
-  <div class="tlacitko"id="horet"   ontouchstart="tlacitkoRight();" ></div>
-  <div class="tlacitko"id="pravet"  ontouchstart="tlacitkoLeft();" ></div>
-  <div class="tlacitko"id="dolet"  ontouchstart="tlacitkoStlac()" ontouchend="tlacitkoPust()">
-    
+  <div id="vertikalnecentrovanie">
+    <div id="ramcecek">
+      <div id="plech">
+        <div class="tlacitko" id="lavet" ontouchstart="tlacitkoUp();"></div>
+        <div class="tlacitko" id="horet" ontouchstart="tlacitkoRight();"></div>
+        <div class="tlacitko" id="pravet" ontouchstart="tlacitkoLeft();"></div>
+        <div class="tlacitko" id="dolet" ontouchstart="tlacitkoStlac()" ontouchend="tlacitkoPust()">
+
+        </div>
+
+        <div class="maletlacitko" id="male1" onmousedown="pauseStartRestart()"></div>
+
+        <span class="popisok" id="popisokpause">PДЦSЄ<br>RЄSTДRT</span>
+
+        <span class="popisok" id="popisokRoate">ЯOTATЄ</span>
+        <span class="popisok" id="popisokLeft">LЄҒT</span>
+        <span class="popisok" id="popisokLay">ЄИTЄЯ</span>
+        <span class="popisok" id="popisokRight">ЯIGHT</span>
+        <div id="ram2">
+          <span id="textnad">TШO ШДY TЯIS</span>
+          <div id="ram">
+            <div id="gameover">GДMԐ ФVЄЯ</div>
+            <div id="skorePopis">SCOЯЄ</div>
+            <div id="skore">0</div>
+            <div id="topSkorePopis">HI-SCOЯЄ</div>
+            <div id="topSkore">0</div>
+
+            <div id="dalsiePole"></div>
+
+            <div id="level">LЄVЄL <span id="levelhodnota">1</span></div>
+
+            <div id="music">♬</div>
+            <div id="pause">PДЦSЄ</div>
+
+            <div id="pole">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="maletlacitko" id="male1" onmousedown="pauseStartRestart()" ></div>
-
-  <span class="popisok" id="popisokpause">PДЦSЄ<br>RЄSTДRT</span>
-
-
-  <span class="popisok" id="popisokRoate">ЯOTATЄ</span>
-  <span class="popisok" id="popisokLeft">LЄҒT</span>
-  <span class="popisok" id="popisokLay">ЄИTЄЯ</span>
-  <span class="popisok" id="popisokRight">ЯIGHT</span>
-<div id="ram2"> 
-    <span id="textnad">TШO ШДY TЯIS</span>
-<div id="ram">
-    <div id="gameover">GДMԐ ФVЄЯ</div>
-    <div id="skorePopis">SCOЯЄ</div>
-    <div id="skore">0</div>
-    <div id="topSkorePopis">HI-SCOЯЄ</div>
-    <div id="topSkore">0</div>
-
-    <div id="dalsiePole"></div>
-
-    <div id="level">LЄVЄL <span id="levelhodnota">1</span></div>
-
-
-    <div id="music">♬</div>
-    <div id="pause">PДЦSЄ</div>
-    
-
-<div id="pole">
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-
-<script type='text/javascript'>
-</script>
+  <script type='text/javascript'>
+  </script>
 </body>
+
 </html>
