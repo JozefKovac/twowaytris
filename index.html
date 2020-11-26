@@ -46,7 +46,7 @@
 
       var padaDole = true; //hore je false
       var tvary = VytvorTvary(
-        "000-111-001 000-111-100 011-110 110-011 11-11 000-111-010 0000-1111-0000"
+        "000-111-001 000-111-100 011-110 110-011 11-11 000-111-010 101-111"
       );
       //pekne v riadku nieje potom treba pisat matrixy
 
@@ -537,8 +537,6 @@
         function () {
           //spusti az po nacitani (casty 9 treba to osetrit)
           vytvorLCD();
-          vytvorDalsieLCD();
-          predStartom();
         },
         false
       );
@@ -827,6 +825,7 @@
           text = text + "</div>";
         }
         document.getElementById("pole").innerHTML = text;
+        vytvorDalsieLCD();
       }
 
       function vytvorDalsieLCD() {
@@ -848,6 +847,7 @@
           text = text + "</div>";
         }
         document.getElementById("dalsiePole").innerHTML = text;
+        predStartom();
       }
 
       function tvarTerazVyska() {
