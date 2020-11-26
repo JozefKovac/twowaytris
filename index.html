@@ -46,7 +46,7 @@
 
       var padaDole = true; //hore je false
       var tvary = VytvorTvary(
-        "000-111-001 000-111-100 011-110 110-011 11-11 000-111-010 101-111"
+        "000-111-001 000-111-100 011-110 110-011 11-11 000-111-010 0000-1111-0000"
       );
       //pekne v riadku nieje potom treba pisat matrixy
 
@@ -856,7 +856,7 @@
       }
 
       function losujTvar() {
-        var tvaro = Math.floor(Math.random() * 7);
+        var tvaro = Math.floor(Math.random() * tvary.length);
         tvarTeraz = tvarPrichystany;
         tvarPrichystany = tvaro;
       }
